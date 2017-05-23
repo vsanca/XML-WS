@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.ftn.uns.ac.rs/zahtev" xmlns:zahtev="http://www.ftn.uns.ac.rs/zahtev">
+
+    <xs:element name="zahtev-za-izvod">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="broj-racuna" type="zahtev:TBroj_racuna"/>
+                <xs:element form="qualified" name="datum" type="xs:date"/>
+                <xs:element name="redni-broj-preseka">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="10"/>
+                            <xs:maxInclusive value="99"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="TBroj_racuna">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{3}-[0-9]{13}-[0-9]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
