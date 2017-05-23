@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mt103="http://www.xml2017.com/schema/mt103"
+    targetNamespace="http://www.xml2017.com/schema/mt103" elementFormDefault="qualified"> 
+    
+    <!-- PROSTI TIPOVI -->
+    <xs:simpleType name="TID">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TSWIFT">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{6}[A-Z0-9]{2}(X{3}|[A-Z0-9]{3})?"/>
+            <xs:minLength value="8"/>
+            <xs:maxLength value="11"/>
+        </xs:restriction>    
+    </xs:simpleType>
+    
+    <!-- sa povlakama ili bez da bude? -->
+    <xs:simpleType name="TBrojRacunaBanke">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{18}"></xs:pattern>
+            <xs:length value="18"></xs:length>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TString255">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TModel">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:totalDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TPozivNaBroj">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="0"></xs:minLength>
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TIznos">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="15"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="TSifraValute">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- KOMPLEKSNI TIPOVI -->
+    <xs:complexType name="TBanka">
+        <xs:sequence>
+            <xs:element name="SWIFT" type="mt103:TSWIFT"></xs:element>
+            <xs:element name="BankAccountNumber" type="mt103:TBrojRacunaBanke"></xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:complexType name="TPlacanje">
+        <xs:sequence>
+            <xs:element name="racun" type="mt103:TBrojRacunaBanke"></xs:element>
+            <xs:element name="model" type="mt103:TModel"/>
+            <xs:element name="poziv_na_broj" type="mt103:TPozivNaBroj"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="TUplata">
+        <xs:sequence>
+            <xs:element name="duznik_nalogodavac" type="mt103:TString255"/>
+            <xs:element name="svrha_placanja" type="mt103:TString255"/>
+            <xs:element name="primalac_poverilac" type="mt103:TString255"/>
+            <xs:element name="datum_naloga" type="xs:date"/>
+            <xs:element name="datum_valute" type="xs:date"/>
+            <xs:element name="duznik_zaduzenje" type="mt103:TPlacanje"/>
+            <xs:element name="poverilac_odobrenje" type="mt103:TPlacanje"/>
+            <xs:element name="iznos" type="mt103:TIznos"/>
+            <xs:element name="sifra_valute" type="mt103:TSifraValute"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- MT103 -->
+    <xs:element name="mt103">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id_poruke" type="mt103:TID"/>
+                <xs:element name="banke">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="banka_duznika" type="mt103:TBanka"></xs:element>
+                            <xs:element name="banka_poverioca" type="mt103:TBanka"></xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="uplata" type="mt103:TUplata"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
