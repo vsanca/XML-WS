@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.xml2017.com/schema/faktura_zaglavlje"
+    xmlns="http://www.xml2017.com/schema/faktura_zaglavlje">
+
+
+    <xs:simpleType name="T_id_poruke">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_dobavljac">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="255"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_PIB">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="11"/>
+            <xs:maxLength value="11"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_kupac">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="55"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_broj_racuna">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:totalDigits value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_racun">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{18}"/>
+            <xs:length value="18"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_decimale_15_2">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="15"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_oznaka_valute">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_redni_broj">
+        <xs:restriction base="xs:unsignedShort">
+            <xs:totalDigits value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_naziv_robe_ili_usluge">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="120"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_decimale_10_2">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="10"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_jedinica_mere">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_decimale_5_2">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="5"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="T_decimale_12_2">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="12"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="T_faktura_stavka">
+        <xs:sequence>
+            <xs:element name="redni_broj" type="T_redni_broj"/>
+            <xs:element name="naziv_robe_ili_usluge" type="T_naziv_robe_ili_usluge"/>
+            <xs:element name="kolicina" type="T_decimale_10_2"/>
+            <xs:element name="jedinica_mere" type="T_jedinica_mere"/>
+            <xs:element name="jedinicna_cena" type="T_decimale_10_2"/>
+            <xs:element name="vrednost" type="T_decimale_10_2"/>
+            <xs:element name="procenat_rabata" type="T_decimale_5_2"/>
+            <xs:element name="iznos_rabata" type="T_decimale_12_2"/>
+            <xs:element name="umanjeno_za_rabat" type="T_decimale_12_2"/>
+            <xs:element name="ukupan_porez" type="T_decimale_12_2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:element name="faktura_zaglavlje">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id_poruke" type="T_id_poruke"/>
+                <xs:element name="naziv_dobavljaca" type="T_dobavljac"/>
+                <xs:element name="adresa_dobavljaca" type="T_dobavljac"/>
+                <xs:element name="pib_dobavljaca" type="T_PIB"/>
+                <xs:element name="naziv_kupca" type="T_kupac"/>
+                <xs:element name="adresa_kupca" type="T_kupac"/>
+                <xs:element name="pib_kupca" type="T_PIB"/>
+                <xs:element name="broj_racuna" type="T_broj_racuna"/>
+                <xs:element name="datum_racuna" type="xs:date"/>
+                <xs:element name="vrednost_robe" type="T_decimale_15_2"/>
+                <xs:element name="vrednost_usluga" type="T_decimale_15_2"/>
+                <xs:element name="ukupno_roba_i_usluge" type="T_decimale_15_2"/>
+                <xs:element name="ukupan_rabat" type="T_decimale_15_2"/>
+                <xs:element name="ukupan_porez" type="T_decimale_15_2"/>
+                <xs:element name="oznaka_valute" type="T_oznaka_valute"/>
+                <xs:element name="iznos_za_uplatu" type="T_decimale_15_2"/>
+                <xs:element name="uplata_na_racun" type="T_racun"/>
+                <xs:element name="datum_valute" type="xs:date"/>
+                <xs:element maxOccurs="unbounded" name="faktura_stavka" type="T_faktura_stavka"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
