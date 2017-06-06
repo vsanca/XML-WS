@@ -163,10 +163,24 @@
 	        </xs:complexType>
 	    </xs:element> -->
 	    
+	    <xs:element name="clearSettleBanka">
+	    	<xs:complexType>
+	        	<xs:sequence>
+	        		<xs:element name="mt102" type="tip:Tmt102"/>
+	        		<xs:element name="mt910" type="tip:Tmt910"/>
+	        	</xs:sequence>
+	        </xs:complexType>
+	    </xs:element>
+	        
+	    <xs:element name="rtgsBanka">
+	        <xs:complexType>
+	        	<xs:sequence>
+	        		<xs:element name="mt103" type="tip:Tmt103"/>
+	        		<xs:element name="mt910" type="tip:Tmt910"/>
+	        	</xs:sequence>
+	        </xs:complexType>
+	    </xs:element>
 	    
-	    
-	    <xs:element name="mt103mt910" type="tip:Tmt103mt910"></xs:element>
-	    <xs:element name="mt102mt910" type="tip:Tmt102mt910"></xs:element>
 	    
 	    <xs:simpleType name="TID">
 	        <xs:restriction base="xs:string">
@@ -423,20 +437,6 @@
 	            </xs:sequence>
 	        </xs:complexType>
 	        
-	        <xs:complexType name="Tmt102mt910">
-	        	<xs:sequence>
-	        		<xs:element name="mt102" type="tip:Tmt102"/>
-	        		<xs:element name="mt910" type="tip:Tmt910"/>
-	        	</xs:sequence>
-	        </xs:complexType>
-	        
-	        <xs:complexType name="Tmt103mt910">
-	        	<xs:sequence>
-	        		<xs:element name="mt103" type="tip:Tmt103"/>
-	        		<xs:element name="mt910" type="tip:Tmt910"/>
-	        	</xs:sequence>
-	        </xs:complexType>
-	        
 	</xs:schema>
   </wsdl:types>
   
@@ -461,12 +461,12 @@
   </wsdl:message>
   
   <wsdl:message name="rtgsBankaRequest">
-    <wsdl:part name="mt103mt109" element="tip:mt103mt910">
+    <wsdl:part name="parameters" element="tip:rtgsBanka">
     </wsdl:part>
   </wsdl:message>
   
   <wsdl:message name="clearSettleBankaRequest">
-    <wsdl:part name="mt102mt109" element="tip:mt102mt910">
+    <wsdl:part name="parameters" element="tip:clearSettleBanka">
     </wsdl:part>
   </wsdl:message>
   
