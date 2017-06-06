@@ -93,8 +93,7 @@
 	<target name="generate-code">
 		<echo level="info" message="Generating code using wsdl2java..."/>
 		
-		<wsdl2java file="${wsdl.dir}/HelloDocument.wsdl"/>
-		<wsdl2java file="${wsdl.dir}/AddressBook.wsdl"/>
+		<wsdl2java file="${wsdl.dir}/centralna_banka.wsdl"/>
 	   
 	</target>
 	
