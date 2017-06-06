@@ -1,62 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mt910="http://www.xml2017.com/schema/mt910"
-    targetNamespace="http://www.xml2017.com/schema/mt910" elementFormDefault="qualified"> 
-
-    <!-- PROSTI TIPOVI -->
-    <xs:simpleType name="TID">
-        <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="50"/>
-        </xs:restriction>
-    </xs:simpleType>
+    targetNamespace="http://www.xml2017.com/schema/mt910" elementFormDefault="qualified" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka"> 
     
-    <xs:simpleType name="TSWIFT">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z]{6}[A-Z0-9]{2}(X{3}|[A-Z0-9]{3})?"/>
-            <xs:minLength value="8"/>
-            <xs:maxLength value="11"/>
-        </xs:restriction>    
-    </xs:simpleType>
-    
-    <xs:simpleType name="TBrojRacunaBanke">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="\d{3}-\d{13}-\d{2}"></xs:pattern>
-            <xs:length value="20"></xs:length>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TIznos">
-        <xs:restriction base="xs:decimal">
-            <xs:totalDigits value="15"/>
-            <xs:fractionDigits value="2"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TSifraValute">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z]{3}"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- KOMPLEKSNI TIPOVI -->
-    <xs:complexType name="TBanka">
-        <xs:sequence>
-            <xs:element name="SWIFT" type="mt910:TSWIFT"></xs:element>
-            <xs:element name="BankAccountNumber" type="mt910:TBrojRacunaBanke"></xs:element>
-        </xs:sequence>
-        <xs:attribute name="id" type="xs:string"></xs:attribute>
-    </xs:complexType>
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
     
     <!-- MT910 -->
     <xs:element name="mt910">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="id_poruke" type="mt910:TID"/>
-                <xs:element name="banka_poverilac" type="mt910:TBanka"/>
-                <xs:element name="id_poruke_naloga" type="mt910:TID"/>
+                <xs:element name="id_poruke" type="tip:TID"/>
+                <xs:element name="banka_poverilac" type="tip:TBanka"/>
+                <xs:element name="id_poruke_naloga" type="tip:TID"/>
                 <xs:element name="datum_valute" type="xs:date"/>
-                <xs:element name="iznos" type="mt910:TIznos"/>
-                <xs:element name="sifra_valute" type="mt910:TSifraValute"/>
+                <xs:element name="iznos" type="tip:TDecimal_15_2"/>
+                <xs:element name="sifra_valute" type="tip:TSifraValute"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

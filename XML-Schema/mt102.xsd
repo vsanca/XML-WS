@@ -1,99 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.xml2017.com/schema/mt102"
-    targetNamespace="http://www.xml2017.com/schema/mt102" elementFormDefault="qualified">
-
-    <xs:simpleType name="TID">
-        <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="50"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="TSWIFT">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?"/>
-            <xs:minLength value="8"/>
-            <xs:maxLength value="11"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="TBrojRacuna">
-        <xs:restriction base="xs:string">
-            <xs:length value="18"/>
-        </xs:restriction>
-    </xs:simpleType>
+    targetNamespace="http://www.xml2017.com/schema/mt102" elementFormDefault="qualified" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka">
     
-    <xs:simpleType name="TIznos">
-        <xs:restriction base="xs:decimal">
-            <xs:totalDigits value="15"/>
-            <xs:fractionDigits value="2"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TSifraValute">
-        <xs:restriction base="xs:string">
-            <xs:length value="3"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TPoduziTekst">
-        <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="255"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TModel">
-        <xs:restriction base="xs:unsignedShort">
-            <xs:totalDigits value="2"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="TPozivNaBroj">
-        <xs:restriction base="xs:string">
-            <xs:length value="20"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:complexType name="TBanka">
-        <xs:sequence>
-            <xs:element name="SWIFTKod" type="TSWIFT"/>
-            <xs:element name="ObracunskiRacunBanke" type="TBrojRacuna"/>
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="TPojedinacnoPlacanje">
-        <xs:sequence>
-            <xs:element name="IDNalogaZaPlacanje" type="TID"/>
-            <xs:element name="Duznik-Nalogodavac" type="TPoduziTekst"/>
-            <xs:element name="SvrhaPlacanja" type="TPoduziTekst"/>
-            <xs:element name="Primalac-Poverilac" type="TPoduziTekst"/>
-            <xs:element name="DatumNaloga" type="xs:date"/>
-            <xs:element name="RacunDuznika" type="TBrojRacuna"/>
-            <xs:element name="ModelZaduzenja" type="TModel"/>
-            <xs:element name="PozivNaBrojZaduzenja" type="TPozivNaBroj"/>
-            <xs:element name="RacunPoverioca" type="TBrojRacuna"/>
-            <xs:element name="ModelOdobrenja" type="TModel"/>
-            <xs:element name="PozivNaBrojOdobrenja" type="TPozivNaBroj"/>
-            <xs:element name="Iznos" type="TIznos"/>
-            <xs:element name="SifraValute" type="TSifraValute"/>
-        </xs:sequence>
-    </xs:complexType>
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
     
     <xs:element name="mt102">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="IDPoruke" type="TID"/>
-                <xs:element name="BankaDuznika" type="TBanka"/>
-                <xs:element name="BankaPoverioca" type="TBanka"/>
-                <xs:element name="UkupanIznos" type="TIznos"/>
-                <xs:element name="SifraValute" type="TSifraValute"/>
+                <xs:element name="IDPoruke" type="tip:TID"/>
+                <xs:element name="BankaDuznika" type="tip:TBanka"/>
+                <xs:element name="BankaPoverioca" type="tip:TBanka"/>
+                <xs:element name="UkupanIznos" type="tip:TDecimal_15_2"/>
+                <xs:element name="SifraValute" type="tip:TSifraValute"/>
                 <xs:element name="DatumValute" type="xs:date"/>
                 <xs:element name="Datum" type="xs:date"/>
                 <xs:element name="PojedinacnaPlacanja">
                     <xs:complexType>
                         <xs:sequence maxOccurs="unbounded" minOccurs="0">
-                            <xs:element name="PojedinacnoPlacanje" type="TPojedinacnoPlacanje"/>
+                            <xs:element name="PojedinacnoPlacanje" type="tip:TPojedinacnoPlacanje"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
