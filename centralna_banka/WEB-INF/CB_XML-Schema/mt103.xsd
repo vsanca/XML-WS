@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mt103="http://www.xml2017.com/schema/mt103"
+    targetNamespace="http://www.xml2017.com/schema/mt103" elementFormDefault="qualified" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka"> 
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+    
+    <!-- MT103 -->
+    <xs:element name="mt103">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id_poruke" type="tip:TID"/>
+                <xs:element name="banke">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="banka_duznika" type="tip:TBanka"></xs:element>
+                            <xs:element name="banka_poverioca" type="tip:TBanka"></xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="uplata" type="tip:TUplata"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

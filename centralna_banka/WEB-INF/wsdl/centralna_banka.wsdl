@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.xml2017.com/centralna_banka"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ws="http://www.xml2017.com/centralna_banka"
+    xmlns:mt102="http://www.xml2017.com/schema/mt102"
+    xmlns:mt103="http://www.xml2017.com/schema/mt103"
+    xmlns:mt900="http://www.xml2017.com/schema/mt900"
+    xmlns:mt910="http://www.xml2017.com/schema/mt910"
+    xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka"
+    >
+    
+    <wsdl:types>
+        <xs:schema>
+            <xs:import schemaLocation="../CB_XML-Schema/mt102.xsd" namespace="http://www.xml2017.com/schema/mt102"/>
+            <xs:import schemaLocation="../CB_XML-Schema/mt103.xsd" namespace="http://www.xml2017.com/schema/mt103"/>
+            <xs:import schemaLocation="../CB_XML-Schema/mt900.xsd" namespace="http://www.xml2017.com/schema/mt900"/>
+            <xs:import schemaLocation="../CB_XML-Schema/mt910.xsd" namespace="http://www.xml2017.com/schema/mt910"/>
+            <xs:import schemaLocation="../CB_XML-Schema/tipovi_podataka.xsd" namespace="http://www.xml2017.com/schema/tipovi_podataka"/>
+            <xs:element name="odgovor-na-placanje" type="xs:boolean"/>
+        </xs:schema>
+    </wsdl:types>
+    
+    <!-- 1.4.1 RTGS -->
+    <wsdl:message name="RTGSRequest">
+        <wsdl:part name="mt103" element="mt103:mt103"/>
+    </wsdl:message>
+    <wsdl:message name="RTGSResponse">
+        <wsdl:part name="mt900" element="mt900:mt900"/>
+    </wsdl:message>
+    <wsdl:message name="RTGSFault">
+        <wsdl:part name="mt103Fault" element="odgovor-na-placanje"/>    <!-- videti šta na kraju da bude indikator greške -->
+    </wsdl:message>
+    
+    <!-- 1.4.1. Clearing & Settlement -->
+    <wsdl:message name="ClearingRequest">
+        <wsdl:part name="mt102" element="mt102:mt102"/>
+    </wsdl:message>
+    <wsdl:message name="ClearingResponse">
+        <wsdl:part name="mt900" element="mt900:mt900"/>
+    </wsdl:message>
+    <wsdl:message name="ClearingFault">
+        <wsdl:part name="mt102Fault" element="odgovor-na-placanje"/>
+    </wsdl:message>
+    
+    <!-- CentralnaBanka Port Type -->
+    <wsdl:portType name="CentralnaBankaPortType">
+        <wsdl:operation name="MT103ReceiveCB">
+            <wsdl:input name="mt103" message="ws:RTGSRequest"/>
+            <wsdl:output name="mt900rtgs" message="ws:RTGSResponse"/>
+            <wsdl:fault name="mt103Fault" message="ws:RTGSFault"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="MT102ReceiveCB">
+            <wsdl:input name="mt102" message="ws:ClearingRequest"/>
+            <wsdl:output name="mt900clearing" message="ws:ClearingResponse"/>
+            <wsdl:fault name="mt102Fault" message="ws:ClearingFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <!-- CentralnaBanka Binding -->
+    <wsdl:binding name="CentralnaBankaBinding" type="ws:CentralnaBankaPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        
+        <wsdl:operation name="MT103ReceiveCB">
+            <wsdl:input name="mt103">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="mt900rtgs">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="mt103Fault"/>
+        </wsdl:operation>
+        
+        <wsdl:operation name="MT102ReceiveCB">
+            <wsdl:input name="mt102">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="mt900clearing">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="mt102Fault"/>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <!-- CentralnaBanka Service -->
+    <wsdl:service name="CentralnaBankaService">
+        <wsdl:port name="CentralnaBankaPort" binding="ws:CentralnaBankaBinding">
+            <soap:address location="http://localhost:8080/centralna"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+</wsdl:definitions>

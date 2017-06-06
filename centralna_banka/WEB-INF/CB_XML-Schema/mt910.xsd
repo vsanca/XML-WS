@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mt910="http://www.xml2017.com/schema/mt910"
+    targetNamespace="http://www.xml2017.com/schema/mt910" elementFormDefault="qualified" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka"> 
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+    
+    <!-- MT910 -->
+    <xs:element name="mt910">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id_poruke" type="tip:TID"/>
+                <xs:element name="banka_poverilac" type="tip:TBanka"/>
+                <xs:element name="id_poruke_naloga" type="tip:TID"/>
+                <xs:element name="datum_valute" type="xs:date"/>
+                <xs:element name="iznos" type="tip:TDecimal_15_2"/>
+                <xs:element name="sifra_valute" type="tip:TSifraValute"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
