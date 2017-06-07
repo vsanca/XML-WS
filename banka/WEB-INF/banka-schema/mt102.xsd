@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mt102="http://www.xml2017.com/schema/mt102"
+    targetNamespace="http://www.xml2017.com/schema/mt102" elementFormDefault="qualified" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka">
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+    
+    <xs:element name="mt102" type="mt102:Tmt102">
+        
+    </xs:element>
+    
+    	<xs:complexType name="Tmt102">
+            <xs:sequence>
+                <xs:element name="IDPoruke" type="tip:TID"/>
+                <xs:element name="BankaDuznika" type="tip:TBanka"/>
+                <xs:element name="BankaPoverioca" type="tip:TBanka"/>
+                <xs:element name="UkupanIznos" type="tip:TDecimal_15_2"/>
+                <xs:element name="SifraValute" type="tip:TSifraValute"/>
+                <xs:element name="DatumValute" type="xs:date"/>
+                <xs:element name="Datum" type="xs:date"/>
+                <xs:element name="PojedinacnaPlacanja">
+                    <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                            <xs:element name="PojedinacnoPlacanje" type="tip:TPojedinacnoPlacanje"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    
+</xs:schema>

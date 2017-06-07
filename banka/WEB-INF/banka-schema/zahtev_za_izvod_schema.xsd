@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.xml2017.com/schema/zahtev" xmlns:zahtev="http://www.xml2017.com/schema/zahtev" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka">
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+
+    <xs:element name="zahtev-za-izvod">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="broj-racuna" type="tip:TBrojRacunaBanke"/>
+                <xs:element form="qualified" name="datum" type="xs:date"/>
+                <xs:element name="redni-broj-preseka" type="tip:TRBrPreseka"/>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>

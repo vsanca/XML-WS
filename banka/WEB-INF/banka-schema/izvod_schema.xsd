@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.xml2017.com/schema/izvod" xmlns:izvod="http://www.xml2017.com/schema/izvod" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka">
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+    
+    <xs:element name="izvod">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="zaglavlje">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="broj-racuna" type="tip:TBrojRacunaBanke"/>
+                            <xs:element name="datum-naloga" type="xs:date"/>
+                            <xs:element name="broj-preseka" type="tip:TBrojPreseka"/>
+                            <xs:element name="prethodno-stanje" type="tip:TDecimal_15_2"/>
+                            <xs:element name="broj-promena-u-korist" type="tip:TNumber6"/>
+                            <xs:element name="ukupno-u-korist" type="tip:TDecimal_15_2"/>
+                            <xs:element name="broj-promena-na-teret" type="tip:TNumber6"/>
+                            <xs:element name="ukupno-na-teret" type="tip:TDecimal_15_2"/>
+                            <xs:element name="novo-stanje" type="tip:TDecimal_15_2"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="presek">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="stavka-preseka" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:all>
+                                        <xs:element name="duznik-nalogodavac" type="tip:TString255"/>
+                                        <xs:element name="svrha-placanja" type="tip:TString255"/>
+                                        <xs:element name="primalac-poverilac" type="tip:TString255"/>
+                                        <xs:element name="datum-naloga" type="xs:date"/>
+                                        <xs:element name="podaci-o-prenosu">
+                                            <xs:complexType>
+                                                <xs:all>
+                                                  <xs:element name="iznos" type="tip:TDecimal_15_2"/>
+                                                  <xs:element name="datum-valute" type="xs:date"/>
+                                                  <xs:element name="duznik-prenos"
+                                                  type="tip:TOsobaPrenos"/>
+                                                  <xs:element name="poverilac-prenos"
+                                                  type="tip:TOsobaPrenos"/>
+                                                </xs:all>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="smer">
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:string">
+                                                  <xs:maxLength value="1"/>
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                    </xs:all>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
