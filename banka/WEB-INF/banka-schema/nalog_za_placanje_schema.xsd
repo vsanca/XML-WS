@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://www.xml2017.com/schema/prenos" xmlns:pre="http://www.xml2017.com/schema/prenos" xmlns:tip="http://www.xml2017.com/schema/tipovi_podataka">
+    
+    <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
+    
+    <xs:element name="nalog-za-prenos">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="id-poruke" type="tip:TID"/>
+                <xs:element name="duznik-nalogodavac" type="tip:TString255"/>
+                <xs:element name="svrha-placanja" type="tip:TString255"/>
+                <xs:element name="primalac-poverilac" type="tip:TString255"/>
+                <xs:element name="datum-naloga" type="xs:date"/>
+                <xs:element name="podaci-o-prenosu">
+                    <xs:complexType>
+                        <xs:all>
+                            <xs:element name="oznaka-valute" type="tip:TSifraValute"/>
+                            <xs:element name="iznos" type="tip:TDecimal_15_2"/>
+                            <xs:element name="datum-valute" type="xs:date"/>
+                            <xs:element name="duznik-prenos" type="tip:TOsobaPrenos"/>
+                            <xs:element name="poverilac-prenos" type="tip:TOsobaPrenos"/>
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+            <xs:attribute default="false" name="hitno" type="xs:boolean" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    
+</xs:schema>
