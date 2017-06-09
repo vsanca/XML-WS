@@ -5,11 +5,10 @@
     <xs:import namespace="http://www.xml2017.com/schema/tipovi_podataka" schemaLocation="tipovi_podataka.xsd"/>
     
     <!-- MT103 -->
-    <xs:element name="mt103" type="mt103:Tmt103">
-        
-    </xs:element>
+    <!-- <xs:element name="mt103" type="mt103:Tmt103">
+    </xs:element>-->
     
-    	<xs:complexType name="Tmt103">
+    	<xs:complexType name="mt103">
             <xs:sequence>
                 <xs:element name="id_poruke" type="tip:TID"/>
                 <xs:element name="banke">

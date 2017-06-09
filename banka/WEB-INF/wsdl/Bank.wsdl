@@ -30,8 +30,8 @@
     	<xs:element name="clearSettleBanka">
 	    	<xs:complexType>
 	        	<xs:sequence>
-	        		<xs:element name="mt102" type="mt102:Tmt102"/>
-	        		<xs:element name="mt910" type="mt910:Tmt910"/>
+	        		<xs:element name="mt102" type="mt102:mt102"/>
+	        		<xs:element name="mt910" type="mt910:mt910"/>
 	        	</xs:sequence>
 	        </xs:complexType>
 	    </xs:element>
@@ -39,8 +39,8 @@
 	    <xs:element name="rtgsBanka">
 	        <xs:complexType>
 	        	<xs:sequence>
-	        		<xs:element name="mt103" type="mt103:Tmt103"/>
-	        		<xs:element name="mt910" type="mt910:Tmt910"/>
+	        		<xs:element name="mt103" type="mt103:mt103"/>
+	        		<xs:element name="mt910" type="mt910:mt910"/>
 	        	</xs:sequence>
 	        </xs:complexType>
 	    </xs:element>
@@ -79,7 +79,7 @@
     </wsdl:part>
   </wsdl:message>
   
-  <wsdl:portType name="BankaPortType">
+  <wsdl:portType name="Banka">
   
     <wsdl:operation name="slanjeNalogaZaPlacanje">
       <wsdl:input name="nalogZaPlacanjeRequest" message="tns:nalogZaPlacanjeRequest">
@@ -107,7 +107,7 @@
     
   </wsdl:portType>
   
-  <wsdl:binding name="BankaServiceSoapBinding" type="tns:BankaPortType">
+  <wsdl:binding name="BankaServiceSoapBinding" type="tns:Banka">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     
     <!-- <wsdl:operation name="sayHello">
@@ -157,8 +157,8 @@
   </wsdl:binding>
   
   <wsdl:service name="BankaService">
-    <wsdl:port name="BankaPort" binding="tns:BankaServiceSoapBinding">
-      <soap:address location="http://localhost:8080/BankaPort"/>
+    <wsdl:port name="Banka" binding="tns:BankaServiceSoapBinding">
+      <soap:address location="http://localhost:8080/banka"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
