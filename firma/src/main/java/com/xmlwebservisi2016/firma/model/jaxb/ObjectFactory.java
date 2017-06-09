@@ -8,6 +8,8 @@
 
 package com.xmlwebservisi2016.firma.model.jaxb;
 
+import com.xmlwebservisi2016.firma.model.jaxb.mt103.Mt103;
+
 import javax.xml.bind.annotation.XmlRegistry;
 
 

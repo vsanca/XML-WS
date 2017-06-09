@@ -28,6 +28,9 @@ public class User implements Serializable {
     @Version
     private int version;
 
+    @Column(name = "fid")
+    private String firma;
+
     public User() {}
 
     public User(String username, String password, int version) {
