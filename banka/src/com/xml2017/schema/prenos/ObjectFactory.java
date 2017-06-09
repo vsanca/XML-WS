@@ -1,5 +1,5 @@
 
-package com.xml2017.schema.mt102;
+package com.xml2017.schema.prenos;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the com.xml2017.schema.mt102 package. 
+ * generated in the com.xml2017.schema.prenos package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,26 +23,26 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.xml2017.schema.mt102
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.xml2017.schema.prenos
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link Mt102 }
+     * Create an instance of {@link NalogZaPrenos }
      * 
      */
-    public Mt102 createMt102() {
-        return new Mt102();
+    public NalogZaPrenos createNalogZaPrenos() {
+        return new NalogZaPrenos();
     }
 
     /**
-     * Create an instance of {@link Mt102 .PojedinacnaPlacanja }
+     * Create an instance of {@link NalogZaPrenos.PodaciOPrenosu }
      * 
      */
-    public Mt102 .PojedinacnaPlacanja createMt102PojedinacnaPlacanja() {
-        return new Mt102 .PojedinacnaPlacanja();
+    public NalogZaPrenos.PodaciOPrenosu createNalogZaPrenosPodaciOPrenosu() {
+        return new NalogZaPrenos.PodaciOPrenosu();
     }
 
 }

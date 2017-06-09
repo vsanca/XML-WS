@@ -15,7 +15,7 @@ import javax.xml.ws.Service;
  * 
  */
 @WebServiceClient(name = "BankaService", 
-                  wsdlLocation = "file:/D:/Git/XML-WS/banka/WEB-INF/wsdl/Bank.wsdl",
+                  wsdlLocation = "file://WEB-INF/wsdl/Bank.wsdl",
                   targetNamespace = "http://www.xml2017.com/banka") 
 public class BankaService extends Service {
 
@@ -26,7 +26,7 @@ public class BankaService extends Service {
     static {
         URL url = null;
         try {
-            url = new URL("file:/D:/Git/XML-WS/banka/WEB-INF/wsdl/Bank.wsdl");
+            url = new URL("file://WEB-INF/wsdl/Bank.wsdl");
         } catch (MalformedURLException e) {
             java.util.logging.Logger.getLogger(BankaService.class.getName())
                 .log(java.util.logging.Level.INFO, 
