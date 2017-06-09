@@ -14,7 +14,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import com.xml2017.centralna_banka.CentralnaBankaPortType;
+import com.xml2017.centralna_banka.CentralnaBanka;
 import com.xml2017.schema.mt102.Mt102;
 import com.xml2017.schema.mt103.Mt103;
 import com.xml2017.schema.mt103.Mt103.Banke;
@@ -29,13 +29,13 @@ public class HelloClient {
     public void testIt() {
     	
 		try {
-			URL wsdlLocation = new URL("http://localhost:8080/centralna/services/CentralnaBanka?wsdl");
+			URL wsdlLocation = new URL("http://localhost:8080/centralna_banka/services/CentralnaBanka?wsdl");
 			QName serviceName = new QName("http://www.xml2017.com/centralna_banka", "CentralnaBankaService");
-			QName portName = new QName("http://www.xml2017.com/centralna_banka", "CentralnaBankaPort");
+			QName portName = new QName("http://www.xml2017.com/centralna_banka", "CentralnaBanka");
 
 			Service service = Service.create(wsdlLocation, serviceName);
 			
-			CentralnaBankaPortType RTGS = service.getPort(portName, CentralnaBankaPortType.class);
+			CentralnaBanka RTGS = service.getPort(portName, CentralnaBanka.class);
 			
 			Mt103 request = new Mt103();
 			request.setIdPoruke("1");
@@ -111,12 +111,15 @@ public class HelloClient {
 			placanje.setSifraValute("RSD");
 			placanje.setSvrhaPlacanja("Svrha");
 			
-			mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje().add(placanje);
+			ArrayList<TPojedinacnoPlacanje> placanja = new ArrayList<TPojedinacnoPlacanje>();
+			placanja.add(placanje);
+			
+			//mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje().add(placanje);
 			
 			
-			Mt900 mt900 = RTGS.mt102ReceiveCB(mt102);
+			//Mt900 mt900 = RTGS.mt102ReceiveCB(mt102);
 			
-			System.out.println(mt900);		
+			System.out.println(mt102);		
 			
 		} catch (Exception e) {
 			e.printStackTrace();

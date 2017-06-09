@@ -25,9 +25,9 @@
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 	<jaxws:endpoint 
-		id="hello" 
+		id="centralna_banka" 
 		address="/CentralnaBanka"
-		implementor="com.xml2017.centralna_banka.CentralnaBankaPortTypeImpl"
+		implementor="com.xml2017.centralna_banka.CentralnaBankaImpl"
 		wsdlLocation="WEB-INF/wsdl/centralna_banka.wsdl"/>
 
 </beans>

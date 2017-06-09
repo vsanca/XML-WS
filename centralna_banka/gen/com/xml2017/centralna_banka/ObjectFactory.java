@@ -1,5 +1,5 @@
 
-package generated;
+package com.xml2017.centralna_banka;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -10,7 +10,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the generated package. 
+ * generated in the com.xml2017.centralna_banka package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -24,10 +24,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _OdgovorNaPlacanje_QNAME = new QName("", "odgovor-na-placanje");
+    private final static QName _OdgovorNaPlacanje_QNAME = new QName("http://www.xml2017.com/centralna_banka", "odgovor-na-placanje");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: generated
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.xml2017.centralna_banka
      * 
      */
     public ObjectFactory() {
@@ -37,7 +37,7 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link Boolean }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "odgovor-na-placanje")
+    @XmlElementDecl(namespace = "http://www.xml2017.com/centralna_banka", name = "odgovor-na-placanje")
     public JAXBElement<Boolean> createOdgovorNaPlacanje(Boolean value) {
         return new JAXBElement<Boolean>(_OdgovorNaPlacanje_QNAME, Boolean.class, null, value);
     }

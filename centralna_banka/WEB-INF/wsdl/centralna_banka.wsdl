@@ -16,7 +16,7 @@
     >
     
     <wsdl:types>
-        <xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ws="http://www.xml2017.com/centralna_banka" targetNamespace="http://www.xml2017.com/centralna_banka" version="1.0">
             <xs:import schemaLocation="../CB_XML-Schema/mt102.xsd" namespace="http://www.xml2017.com/schema/mt102"/>
             <xs:import schemaLocation="../CB_XML-Schema/mt103.xsd" namespace="http://www.xml2017.com/schema/mt103"/>
             <xs:import schemaLocation="../CB_XML-Schema/mt900.xsd" namespace="http://www.xml2017.com/schema/mt900"/>
@@ -34,7 +34,7 @@
         <wsdl:part name="mt900" element="mt900:mt900"/>
     </wsdl:message>
     <wsdl:message name="RTGSFault">
-        <wsdl:part name="mt103Fault" element="odgovor-na-placanje"/>    <!-- videti šta na kraju da bude indikator greške -->
+        <wsdl:part name="mt103Fault" element="ws:odgovor-na-placanje"/>    <!-- videti šta na kraju da bude indikator greške -->
     </wsdl:message>
     
     <!-- 1.4.1. Clearing & Settlement -->
@@ -45,11 +45,11 @@
         <wsdl:part name="mt900" element="mt900:mt900"/>
     </wsdl:message>
     <wsdl:message name="ClearingFault">
-        <wsdl:part name="mt102Fault" element="odgovor-na-placanje"/>
+        <wsdl:part name="mt102Fault" element="ws:odgovor-na-placanje"/>
     </wsdl:message>
     
     <!-- CentralnaBanka Port Type -->
-    <wsdl:portType name="CentralnaBankaPortType">
+    <wsdl:portType name="CentralnaBanka">
         <wsdl:operation name="MT103ReceiveCB">
             <wsdl:input name="mt103" message="ws:RTGSRequest"/>
             <wsdl:output name="mt900rtgs" message="ws:RTGSResponse"/>
@@ -64,7 +64,7 @@
     </wsdl:portType>
     
     <!-- CentralnaBanka Binding -->
-    <wsdl:binding name="CentralnaBankaBinding" type="ws:CentralnaBankaPortType">
+    <wsdl:binding name="CentralnaBankaBinding" type="ws:CentralnaBanka">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
         
         <wsdl:operation name="MT103ReceiveCB">
@@ -90,8 +90,8 @@
     
     <!-- CentralnaBanka Service -->
     <wsdl:service name="CentralnaBankaService">
-        <wsdl:port name="CentralnaBankaPort" binding="ws:CentralnaBankaBinding">
-            <soap:address location="http://localhost:8080/centralna"/>
+        <wsdl:port binding="ws:CentralnaBankaBinding" name="CentralnaBanka">
+            <soap:address location="http://localhost:8080/centralna_banka"/>
         </wsdl:port>
     </wsdl:service>
     
