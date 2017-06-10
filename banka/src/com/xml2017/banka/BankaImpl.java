@@ -12,6 +12,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.Validator;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
@@ -52,6 +54,10 @@ import com.xml2017.bankaTipovi.BankaRacunKlijenta;
 import com.xml2017.centralna_import.CentralnaBanka;
 import com.xml2017.centralna_import.ClearingFault;
 import com.xml2017.centralna_import.RTGSFault;
+import com.xml2017.schema.izvod.Izvod;
+import com.xml2017.schema.izvod.Izvod.Presek;
+import com.xml2017.schema.izvod.Izvod.Zaglavlje;
+import com.xml2017.schema.izvod.Izvod.Presek.StavkaPreseka;
 import com.xml2017.schema.mt102.Mt102;
 import com.xml2017.schema.mt102.Mt102.PojedinacnaPlacanja;
 import com.xml2017.schema.mt103.Mt103;
@@ -86,15 +92,155 @@ public class BankaImpl implements Banka {
      * @see com.xml2017.banka.Banka#preuzimanjeIzvoda(com.xml2017.schema.zahtev.ZahtevZaIzvod  zahtev )*
      */
     public com.xml2017.schema.izvod.Izvod preuzimanjeIzvoda(com.xml2017.schema.zahtev.ZahtevZaIzvod zahtev) { 
-        LOG.info("Executing operation preuzimanjeIzvoda");
-        System.out.println(zahtev);
-        try {
-            com.xml2017.schema.izvod.Izvod _return = null;
-            return _return;
-        } catch (java.lang.Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
+        
+    	Izvod izvod = new Izvod();
+    	
+    	if (zahtev.getRedniBrojPreseka() < 1) {
+    		return null;
+    	}
+    	
+    	long rbrMaks = zahtev.getRedniBrojPreseka() * 10;
+    	long rbrMin = rbrMaks - 10;
+    	
+    	DatabaseClient dbClient = DatabaseClientFactory.newClient("localhost",
+    			8000, "admin", "admin", Authentication.DIGEST);
+    	
+    	XMLDocumentManager xmlDocManager = dbClient.newXMLDocumentManager();
+    	
+    	QueryManager queryManager = dbClient.newQueryManager();
+    	
+    	// potrebni su svi nalozi iz tog dana, gde se trazeni broj racuna pojavio
+    	// ili kao duznik ili kao poverilac
+    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+    	StructuredQueryDefinition queryDef = 
+    			queryBuilder.and(
+    					queryBuilder.collection("/nalozi-obradjeni"),
+    					queryBuilder.value(
+    							queryBuilder.element("datum-naloga"),
+    							zahtev.getDatum().toString()),
+    					queryBuilder.value(
+    							queryBuilder.element("broj-racuna"),
+    							zahtev.getBrojRacuna()));
+    	
+    	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
+    	
+    	List<NalogZaPrenos> nalozi = new ArrayList<NalogZaPrenos>();
+    	JAXBContext context = null;
+    	try {
+			context = JAXBContext.newInstance(NalogZaPrenos.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+    	JAXBHandle<NalogZaPrenos> readHandle = new JAXBHandle<NalogZaPrenos>(context);
+    	
+    	for (MatchDocumentSummary docSum : search.getMatchResults()) {
+    		
+    		xmlDocManager.read(docSum.getUri(), readHandle);
+    		nalozi.add(readHandle.get());
+    		
+    	}	
+    	
+    	try {
+			context = JAXBContext.newInstance(BankaRacunKlijenta.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+    	JAXBHandle<BankaRacunKlijenta> readHandleRacun = new JAXBHandle<BankaRacunKlijenta>(context);
+    	
+    	queryDef =
+    			queryBuilder.and(
+    					queryBuilder.collection("/racuni"),
+    					queryBuilder.value(
+    							queryBuilder.element("banka-port"),
+    							BankaService.port),
+    					queryBuilder.value(
+    							queryBuilder.element("broj-racuna"),
+    							zahtev.getBrojRacuna()));
+    	
+    	search = queryManager.search(queryDef, new SearchHandle());
+    	
+    	if (search.getMatchResults().length != 1) {
+    		return null;
+    	}
+    	
+    	xmlDocManager.read(search.getMatchResults()[0].getUri(), readHandleRacun);
+    	BankaRacunKlijenta racun = readHandleRacun.get();
+    	
+    	Zaglavlje zaglavlje = new Zaglavlje();
+    	Presek presek = new Presek();
+    	
+    	zaglavlje.setBrojRacuna(zahtev.getBrojRacuna());
+    	zaglavlje.setDatumNaloga(zahtev.getDatum());
+    	zaglavlje.setBrojPreseka(nalozi.size()/10 + 1);
+    	
+    	double tempStanje = racun.getStanje().doubleValue();
+    	int brojNaTeret = 0;
+    	int brojUKorist = 0;
+    	double ukupnoNaTeret = 0;
+    	double ukupnoUKorist = 0;
+    	
+    	for (int i = 0; i < nalozi.size(); i++) {
+    		
+    		if (nalozi.get(i).getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()
+    				.equals(zahtev.getBrojRacuna())) {
+    			
+    			// znaci da je bio na teret
+    			brojNaTeret++;
+    			ukupnoNaTeret += nalozi.get(i).getPodaciOPrenosu().getIznos().doubleValue();
+    			tempStanje += nalozi.get(i).getPodaciOPrenosu().getIznos().doubleValue();
+    			
+    		}
+    		else {
+    			
+    			// znaci da je bio u korist
+    			brojUKorist++;
+    			ukupnoUKorist += nalozi.get(i).getPodaciOPrenosu().getIznos().doubleValue();
+    			tempStanje -= nalozi.get(i).getPodaciOPrenosu().getIznos().doubleValue();
+    		}
+    		
+    		if (i >= rbrMin && i < rbrMaks) {
+    			
+    			// info o nalogu ide u ovaj presek
+    			StavkaPreseka stavka = new StavkaPreseka();
+    			stavka.setDatumNaloga(nalozi.get(i).getDatumNaloga());
+    			stavka.setDuznikNalogodavac(nalozi.get(i).getDuznikNalogodavac());
+    			stavka.setPrimalacPoverilac(nalozi.get(i).getPrimalacPoverilac());
+    			stavka.setSvrhaPlacanja(nalozi.get(i).getSvrhaPlacanja());
+    			
+    			StavkaPreseka.PodaciOPrenosu prenos = new StavkaPreseka.PodaciOPrenosu();
+    			prenos.setDatumValute(nalozi.get(i).getDatumNaloga());
+    			prenos.setDuznikPrenos(nalozi.get(i).getPodaciOPrenosu().getDuznikPrenos());
+    			prenos.setPoverilacPrenos(nalozi.get(i).getPodaciOPrenosu().getPoverilacPrenos());
+    			prenos.setIznos(nalozi.get(i).getPodaciOPrenosu().getIznos());
+    			
+    			stavka.setPodaciOPrenosu(prenos);
+    			
+    			if (nalozi.get(i).getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()
+        				.equals(zahtev.getBrojRacuna())) {
+    				stavka.setSmer("T");
+    			}
+    			else {
+    				stavka.setSmer("K");
+    			}
+    			
+    			presek.getStavkaPreseka().add(stavka);
+    			
+    		}
+ 
+    	}
+    	
+    	zaglavlje.setBrojPromenaNaTeret(brojNaTeret);
+    	zaglavlje.setBrojPromenaUKorist(brojUKorist);
+    	zaglavlje.setUkupnoNaTeret(BigDecimal.valueOf(ukupnoNaTeret));
+    	zaglavlje.setUkupnoUKorist(BigDecimal.valueOf(ukupnoUKorist));
+    	zaglavlje.setPrethodnoStanje(BigDecimal.valueOf(tempStanje));
+    	zaglavlje.setNovoStanje(racun.getStanje());
+    	
+    	izvod.setZaglavlje(zaglavlje);
+    	izvod.setPresek(presek);
+    	
+    	return izvod;
+    	
     }
 
     /* (non-Javadoc)
@@ -257,7 +403,9 @@ public class BankaImpl implements Banka {
     			gregor.setTime(date);
     			XMLGregorianCalendar xmlGregor;
     			try {
-					xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregor);
+    				xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+    						gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+    						gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
 				} catch (DatatypeConfigurationException e) {
 					e.printStackTrace();
 					return false;
@@ -501,7 +649,9 @@ public class BankaImpl implements Banka {
         			gregor.setTime(date);
         			XMLGregorianCalendar xmlGregor;
         			try {
-    					xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregor);
+        				xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+        						gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+        						gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
     				} catch (DatatypeConfigurationException e) {
     					e.printStackTrace();
     					return false;
@@ -555,7 +705,7 @@ public class BankaImpl implements Banka {
     				
     				JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
     				
-    				xmlDocManager.read("/obracunski" + duznik.getBankaPort(), readHandleObracunski);
+    				xmlDocManager.read("/obracunskiRacun" + duznik.getBankaPort(), readHandleObracunski);
     				
     				TBanka duznikBanka = new TBanka();
     				duznikBanka.setId("111");
@@ -564,7 +714,7 @@ public class BankaImpl implements Banka {
     				
     				readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
     				
-    				xmlDocManager.read("/obracunski" + poverilac.getBankaPort(), readHandleObracunski);
+    				xmlDocManager.read("/obracunskiRacun" + poverilac.getBankaPort(), readHandleObracunski);
     				
     				TBanka poverilacBanka = new TBanka();
     				poverilacBanka.setId("112");
@@ -587,6 +737,96 @@ public class BankaImpl implements Banka {
     				
     				System.out.println("Vracen mt900: " + mt900Odgovor.getIdPoruke());
     				
+    				
+    				// uskladjivanje obracunskog racuna	
+    				readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    				
+    				String docIdObracunski = "/obracunskiRacun" + BankaService.port;
+    				String collIdObracunski = "/obracunski";
+    				
+    				DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            		metadata.getCollections().add(collIdObracunski);
+            		
+            		xmlDocManager.read(docIdObracunski, readHandleObracunski);
+            		
+            		BankaObracunskiRacun obracunski = readHandleObracunski.get();
+            		
+            		obracunski.setStanje(BigDecimal.valueOf(obracunski.getStanje().doubleValue() + 
+            				mt102.getUkupanIznos().doubleValue()));
+            		
+            		JAXBHandle<BankaObracunskiRacun> writeHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+            		
+            		writeHandleObracunski.set(obracunski);
+            		
+            		xmlDocManager.write(docIdObracunski, metadata, writeHandleObracunski);
+            		
+            		
+            		// uskladjivanje klijentskih racuna
+            		metadata = new DocumentMetadataHandle();
+        			metadata.getCollections().add("/racuni");
+        			
+            		for (TPojedinacnoPlacanje placanje : mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje()) {
+            			
+            			queryDef = 
+            					queryBuilder.and(
+            							queryBuilder.collection("/racuni"),
+            							queryBuilder.value(queryBuilder.element("broj-racuna"), placanje.getRacunDuznika()));
+            			
+            			searchHandle = queryManager.search(queryDef, new SearchHandle());
+            			
+            			if (searchHandle.getMatchResults().length != 1) {
+            				return false;
+            			}
+            			
+            			String docIdRacun = searchHandle.getMatchResults()[0].getUri();
+            			
+            			try {
+							context = JAXBContext.newInstance(BankaRacunKlijenta.class);
+						} catch (JAXBException e) {
+							e.printStackTrace();
+							return false;
+						}
+            			
+            			readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
+            			
+            			xmlDocManager.read(docIdRacun, readHandle);
+            			
+            			BankaRacunKlijenta racun = readHandle.get();
+            			
+            			racun.setStanje(BigDecimal.valueOf(racun.getStanje().doubleValue() - 
+            					placanje.getIznos().doubleValue()));
+            			
+            			JAXBHandle<BankaRacunKlijenta> writeHandle = new JAXBHandle<BankaRacunKlijenta>(context);
+            			
+            			writeHandle.set(racun);
+            			
+            			xmlDocManager.write(docIdRacun, metadata, writeHandle);
+            		}
+            		
+            		
+            		//uskladjivanje naloga
+            		metadata = new DocumentMetadataHandle();
+            		metadata.getCollections().add("/nalozi-obradjeni");
+            		
+            		try {
+						context = JAXBContext.newInstance(NalogZaPrenos.class);
+					} catch (JAXBException e1) {
+						e1.printStackTrace();
+						return false;
+					}
+            		
+    				for (NalogZaPrenos neobradjeni : naloziIzmedjuBanaka) {
+    					
+    					JAXBHandle<NalogZaPrenos> writeHandleNalog = new JAXBHandle<NalogZaPrenos>(context);
+    					
+    					writeHandleNalog.set(neobradjeni);
+    					
+    					String docIdNeobradjeni = "/nalog" + neobradjeni.getIdPoruke();
+    					
+    					xmlDocManager.write(docIdNeobradjeni, metadata, writeHandleNalog);
+    				}
+            		
+    				
     				// cuvanje mt900-a kao izvrsenog
             		try {
     					context = JAXBContext.newInstance(Mt900.class);
@@ -598,7 +838,7 @@ public class BankaImpl implements Banka {
             		String docIdMt900 = "/" + mt900Odgovor.getIdPoruke();
             		String collIdMt900 = "/mt900";
             		
-            		DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            		metadata = new DocumentMetadataHandle();
             		metadata.getCollections().add(collIdMt900);
             		
             		JAXBHandle<Mt900> writeHandleMt900 = new JAXBHandle<Mt900>(context);
@@ -629,7 +869,7 @@ public class BankaImpl implements Banka {
             		xmlDocManager.write(docIdNalog, metadata, writeHandleNalog);
             		
             		System.out.println("Sacuvan nalog: " + nalog.getIdPoruke() + "kao obradjen");		
-    				
+            		
     			}
     			else {
     				

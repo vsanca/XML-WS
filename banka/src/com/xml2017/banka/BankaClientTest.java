@@ -3,12 +3,14 @@ package com.xml2017.banka;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
@@ -137,10 +139,16 @@ public void nalogWriteAndQueryTest() {
 	gregor.setTime(date);
 	XMLGregorianCalendar xmlGregor = null;
 	try {
-		xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendar(gregor);
+		xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+				gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+				gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
 	} catch (DatatypeConfigurationException e) {
 		e.printStackTrace();
 	}
+	
+	System.out.println(xmlGregor.toString());
+	
+	System.out.println(xmlGregor.toXMLFormat());
 	
 	NalogZaPrenos nalog = new NalogZaPrenos();
 	
@@ -220,9 +228,9 @@ public void nalogWriteAndQueryTest() {
 	public static void main(String[] args) {
 		
 		BankaClientTest bankaTest = new BankaClientTest();
-		bankaTest.testIt1();
+		//bankaTest.testIt1();
 		//bankaTest.testMarkLogicConnection();
-		//bankaTest.nalogWriteAndQueryTest();
+		bankaTest.nalogWriteAndQueryTest();
 
 	}
 
