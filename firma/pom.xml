@@ -103,6 +103,12 @@
 			<artifactId>angular-material</artifactId>
 			<version>1.1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -111,6 +117,65 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<id>set-additional-system-properties</id>
+						<goals>
+							<goal>set-system-properties</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<properties>
+						<property>
+							<name>javax.xml.accessExternalSchema</name>
+							<value>file,http</value>
+						</property>
+						<property>
+							<name>javax.xml.accessExternalSchema</name>
+							<value>all</value>
+						</property>
+					</properties>
+					<outputFile/>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<sources>
+						<source>${project.basedir}/../XML-Schema/izvod_schema.xsd</source>
+						<source>${project.basedir}/../XML-Schema/mt102.xsd</source>
+						<source>${project.basedir}/../XML-Schema/mt103.xsd</source>
+						<source>${project.basedir}/../XML-Schema/mt900.xsd</source>
+						<source>${project.basedir}/../XML-Schema/mt910.xsd</source>
+						<source>${project.basedir}/../XML-Schema/zahtev_za_izvod_schema.xsd</source>
+						<source>${project.basedir}/../XML-Schema/nalog_za_placanje_schema.xsd</source>
+					</sources>
+
+					<outputDirectory>${project.basedir}/src/main/java/com/xmlwebservisi2016/firma/model/jaxb</outputDirectory>
+					<clearOutputDir>true</clearOutputDir>
+
+				</configuration>
+			</plugin>
+
+
 		</plugins>
 	</build>
 
