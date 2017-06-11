@@ -60,7 +60,7 @@ public class BankaDataInit {
 		
 		obracunski.setBankaPort(BankaService.port);
 		obracunski.setBrojObracunskog("000-0000000000000-00");
-		obracunski.setStanje(BigDecimal.ZERO);
+		obracunski.setStanje(BigDecimal.valueOf(300000.00));
 		obracunski.setSwiftKod(swiftKod);
 	
 		context = JAXBContext.newInstance(BankaObracunskiRacun.class);

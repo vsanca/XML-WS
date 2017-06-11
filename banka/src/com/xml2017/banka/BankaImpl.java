@@ -411,18 +411,31 @@ public class BankaImpl implements Banka {
 					return false;
 				}
     			
+    			try {
+					context = JAXBContext.newInstance(BankaObracunskiRacun.class);
+				} catch (JAXBException e1) {
+					e1.printStackTrace();
+					return false;
+				}
+    			JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    			
+    			xmlDocManager.read("/obracunskiRacun" + duznik.getBankaPort(), readHandleObracunski);
+    			BankaObracunskiRacun obracunskiDuznik = readHandleObracunski.get();
+    			
+    			xmlDocManager.read("/obracunskiRacun" + poverilac.getBankaPort(), readHandleObracunski);
+    			BankaObracunskiRacun obracunskiPoverilac = readHandleObracunski.get();
     			
     			// formiranje mt103
     			Mt103 mt103 = new Mt103();
     			mt103.setIdPoruke(mt103Id);
     			
     			TBanka duznikBanka = new TBanka();
-    			duznikBanka.setBankAccountNumber(duznik.getBrojRacuna());
+    			duznikBanka.setBankAccountNumber(obracunskiDuznik.getBrojObracunskog());
     			duznikBanka.setSWIFT(duznik.getSwiftKod());
     			duznikBanka.setId("111");
     			
     			TBanka poverilacBanka = new TBanka();
-    			poverilacBanka.setBankAccountNumber(poverilac.getBrojRacuna());
+    			poverilacBanka.setBankAccountNumber(obracunskiPoverilac.getBrojObracunskog());
     			poverilacBanka.setSWIFT(poverilac.getSwiftKod());
     			poverilacBanka.setId("112");
     			
@@ -469,14 +482,11 @@ public class BankaImpl implements Banka {
     			
     			// skidanje sa racuna duznika i prebacivanje na obracunski
     			String docIdObracunski = "/obracunskiRacun" + BankaService.port;
-    			try {
-    				context = JAXBContext.newInstance(BankaObracunskiRacun.class);
-    			} catch (JAXBException e) {
-    				e.printStackTrace();
-    				return false;
-    			}
     			
-    		    JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    			// context je vec postavljen na BankaObracunskiRacun, mora ponovo da se
+    			// procita iz baze jer je verovatno doslo do izmene, zbog metode
+    			// centralne banke
+    		    readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
     		    xmlDocManager.read(docIdObracunski, readHandleObracunski);
     		    BankaObracunskiRacun obracunski = readHandleObracunski.get();
     			
@@ -526,7 +536,7 @@ public class BankaImpl implements Banka {
 					return false;
 				}
         		
-        		String docIdMt900 = "/" + mt900Odgovor.getIdPoruke();
+        		String docIdMt900 = "/mt900" + mt900Odgovor.getIdPoruke();
         		String collIdMt900 = "/mt900";
         		
         		metadata = new DocumentMetadataHandle();
@@ -835,7 +845,7 @@ public class BankaImpl implements Banka {
     					return false;
     				}
             		
-            		String docIdMt900 = "/" + mt900Odgovor.getIdPoruke();
+            		String docIdMt900 = "/mt900" + mt900Odgovor.getIdPoruke();
             		String collIdMt900 = "/mt900";
             		
             		metadata = new DocumentMetadataHandle();
@@ -911,28 +921,229 @@ public class BankaImpl implements Banka {
      * @see com.xml2017.banka.Banka#rtgsBanka(com.xml2017.schema.mt103.Mt103  mt103 ,)com.xml2017.schema.mt910.Mt910  mt910 )*
      */
     public void rtgsBanka(com.xml2017.schema.mt103.Mt103 mt103,com.xml2017.schema.mt910.Mt910 mt910) { 
-        LOG.info("Executing operation rtgsBanka");
-        System.out.println(mt103);
-        System.out.println(mt910);
-        try {
-        } catch (java.lang.Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
+        
+    	// pronaci obracunski i racun klijenta, prebaciti sredstva sa obracunskog
+    	// na racun klijenta
+    	
+    	DatabaseClient dbClient = DatabaseClientFactory.newClient("localhost",
+    			8000, "admin", "admin", Authentication.DIGEST);
+    	
+    	XMLDocumentManager xmlDocManager = dbClient.newXMLDocumentManager();
+    	
+    	QueryManager queryManager = dbClient.newQueryManager();
+    	
+    	System.out.println("Uskladjivanje obracunskog racuna");
+    	
+    	JAXBContext context;
+    	try {
+			context = JAXBContext.newInstance(BankaObracunskiRacun.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	
+    	System.out.println("Prosao je kontekst");
+    	JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    	System.out.println("Prosao je handle");
+    	DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+    	metadata.getCollections().add("/obracunski");
+    	System.out.println("Prosao je metadata");
+    	
+    	xmlDocManager.read("/obracunskiRacun" + BankaService.port, readHandleObracunski);
+    	System.out.println("Prosao je read");
+    	BankaObracunskiRacun obracunski = readHandleObracunski.get();
+    	System.out.println("Obracunski je postavljen");
+    	
+    	System.out.println("Obracunski SWIFT: " + obracunski.getSwiftKod());
+    	obracunski.setStanje(BigDecimal.valueOf(obracunski.getStanje().doubleValue() - 
+    			mt103.getUplata().getIznos().doubleValue()));
+    	
+    	System.out.println("Azurirano stanje");
+    	
+    	JAXBHandle<BankaObracunskiRacun> writeHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    	writeHandleObracunski.set(obracunski);
+    	
+    	System.out.println("Tacno pre write-a");
+    	xmlDocManager.write("/obracunskiRacun" + BankaService.port, metadata, writeHandleObracunski);
+    	
+    	System.out.println("Obracunski racun azuriran");
+    	System.out.println("Uskladivanje racuna klijenta");
+    	
+    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+    	StructuredQueryDefinition queryDef = 
+    			queryBuilder.and(
+    					queryBuilder.collection("/racuni"),
+    					queryBuilder.value(
+    							queryBuilder.element("broj-racuna"),
+    							mt103.getUplata().getPoverilacOdobrenje().getRacun()));
+    	
+    	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
+    	
+    	if (search.getMatchResults().length != 1) {
+    		return;
+    	}
+    	
+    	String docIdRacun = search.getMatchResults()[0].getUri();
+    	
+    	try {
+			context = JAXBContext.newInstance(BankaRacunKlijenta.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	JAXBHandle<BankaRacunKlijenta> readHandleRacun = new JAXBHandle<BankaRacunKlijenta>(context);
+    	
+    	xmlDocManager.read(docIdRacun, readHandleRacun);
+    	BankaRacunKlijenta poverilacRacun = readHandleRacun.get();
+    	
+    	metadata = new DocumentMetadataHandle();
+    	metadata.getCollections().add("/racuni");
+    	
+    	poverilacRacun.setStanje(BigDecimal.valueOf(poverilacRacun.getStanje().doubleValue() + 
+    			mt103.getUplata().getIznos().doubleValue()));
+    	
+    	JAXBHandle<BankaRacunKlijenta> writeHandleRacun = new JAXBHandle<BankaRacunKlijenta>(context);
+    	writeHandleRacun.set(poverilacRacun);
+    	xmlDocManager.write(docIdRacun, metadata, writeHandleRacun);
+    	
+    	System.out.println("Racun klijenta azuriran");
+    	
+    	
+    	// sacuvati mt910
+    	System.out.println("Cuvanje vracenog mt910-a");
+    	
+    	try {
+			context = JAXBContext.newInstance(Mt910.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	JAXBHandle<Mt910> writeHandleMt910 = new JAXBHandle<Mt910>(context);
+    	writeHandleMt910.set(mt910);
+    	
+    	metadata = new DocumentMetadataHandle();
+    	metadata.getCollections().add("/mt910");
+    	
+    	xmlDocManager.write("/mt910" + mt910.getIdPoruke(), metadata, writeHandleMt910);
+    	
     }
 
     /* (non-Javadoc)
      * @see com.xml2017.banka.Banka#clearSettleBanka(com.xml2017.schema.mt102.Mt102  mt102 ,)com.xml2017.schema.mt910.Mt910  mt910 )*
      */
     public void clearSettleBanka(com.xml2017.schema.mt102.Mt102 mt102,com.xml2017.schema.mt910.Mt910 mt910) { 
-        LOG.info("Executing operation clearSettleBanka");
-        System.out.println(mt102);
-        System.out.println(mt910);
-        try {
-        } catch (java.lang.Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex);
-        }
+        
+    	// potrebno je uskladiti sve racune i obracunski, nalozi su vec sredjeni od
+    	// strane druge banke
+    	
+    	DatabaseClient dbClient = DatabaseClientFactory.newClient("localhost",
+    			8000, "admin", "admin", Authentication.DIGEST);
+    	
+    	XMLDocumentManager xmlDocManager = dbClient.newXMLDocumentManager();
+    	
+    	QueryManager queryManager = dbClient.newQueryManager();
+    	
+    	System.out.println("Uskladjivanje obracunskog racuna");
+    	
+    	JAXBContext context;
+    	try {
+			context = JAXBContext.newInstance(BankaObracunskiRacun.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    	
+    	DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+    	metadata.getCollections().add("/obracunski");
+    	
+    	xmlDocManager.read("/obracunskiRacun" + BankaService.port, readHandleObracunski);
+    	BankaObracunskiRacun obracunski = readHandleObracunski.get();
+    	
+    	obracunski.setStanje(BigDecimal.valueOf(obracunski.getStanje().doubleValue() - 
+    			mt102.getUkupanIznos().doubleValue()));
+    	
+    	JAXBHandle<BankaObracunskiRacun> writeHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
+    	writeHandleObracunski.set(obracunski);
+    	xmlDocManager.write("/obracunskiRacun" + BankaService.port, metadata, writeHandleObracunski);
+    	
+    	System.out.println("Obracunski racun azuriran");
+    	
+    	
+    	System.out.println("Uskladivanje svih racuna klijenta koji su u mt102");
+    	
+    	try {
+			context = JAXBContext.newInstance(BankaRacunKlijenta.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	
+    	// uskladjivanje klijentskih racuna
+		metadata = new DocumentMetadataHandle();
+		metadata.getCollections().add("/racuni");
+		
+		StructuredQueryDefinition queryDef;
+		StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+		JAXBHandle<BankaRacunKlijenta> readHandle;
+		JAXBHandle<BankaRacunKlijenta> writeHandle;
+		SearchHandle searchHandle;
+		
+		for (TPojedinacnoPlacanje placanje : mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje()) {
+			
+			queryDef = 
+					queryBuilder.and(
+							queryBuilder.collection("/racuni"),
+							queryBuilder.value(
+									queryBuilder.element("broj-racuna"),
+									placanje.getRacunPoverioca()));
+			
+			searchHandle = queryManager.search(queryDef, new SearchHandle());
+			
+			if (searchHandle.getMatchResults().length != 1) {
+				return;
+			}
+			
+			String docIdRacun = searchHandle.getMatchResults()[0].getUri();
+			
+			readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
+			
+			xmlDocManager.read(docIdRacun, readHandle);
+			
+			BankaRacunKlijenta racun = readHandle.get();
+			
+			racun.setStanje(BigDecimal.valueOf(racun.getStanje().doubleValue() + 
+					placanje.getIznos().doubleValue()));
+			
+			writeHandle = new JAXBHandle<BankaRacunKlijenta>(context);
+			
+			writeHandle.set(racun);
+			
+			xmlDocManager.write(docIdRacun, metadata, writeHandle);
+			
+		}
+    	
+		System.out.println("Racuni klijenata azurirani");
+    	
+		
+    	// sacuvati mt910
+    	
+		System.out.println("Cuvanje vracenog mt910-a");
+    	
+    	try {
+			context = JAXBContext.newInstance(Mt910.class);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			return;
+		}
+    	JAXBHandle<Mt910> writeHandleMt910 = new JAXBHandle<Mt910>(context);
+    	writeHandleMt910.set(mt910);
+    	
+    	metadata = new DocumentMetadataHandle();
+    	metadata.getCollections().add("/mt910");
+    	
+    	xmlDocManager.write("/mt910" + mt910.getIdPoruke(), metadata, writeHandleMt910);
+    	
     }
 
 }

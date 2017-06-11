@@ -66,8 +66,8 @@ public void testIt1() {
 			duznik.setId("111");
 			
 			TBanka poverilac = new TBanka();
-			poverilac.setBankAccountNumber("321-3213213213213-32");
-			poverilac.setSWIFT("BBBBRS01");
+			poverilac.setBankAccountNumber("000-0000000000000-00");
+			poverilac.setSWIFT("AAAABBNS");
 			poverilac.setId("222");
 			
 			banke.setBankaDuznika(duznik);
@@ -75,18 +75,18 @@ public void testIt1() {
 			mt103.setBanke(banke);
 			
 			TUplata u = new TUplata();
-			u.setIznos(new BigDecimal(1234));
+			u.setIznos(BigDecimal.valueOf(250000.00));
 			
 			TPlacanje poverilac1 = new TPlacanje();
 			TPlacanje duznik1 = new TPlacanje();
 			
 			poverilac1.setModel(new Long(97));
 			poverilac1.setPozivNaBroj("11111111111111111111");
-			poverilac1.setRacun(poverilac.getBankAccountNumber());
+			poverilac1.setRacun("111-1111111111111-11");
 			
 			duznik1.setModel(new Long(97));
 			duznik1.setPozivNaBroj("22222222222222222222");
-			duznik1.setRacun(duznik.getBankAccountNumber());
+			duznik1.setRacun("111-1111111111111-12");
 			
 			u.setPrimalacPoverilac("Poverilac");
 			u.setPoverilacOdobrenje(poverilac1);
@@ -107,7 +107,7 @@ public void testIt1() {
 			mt910.setIdPoruke("Isto 1");
 			mt910.setBankaPoverilac(poverilac);
 //			mt910.setDatumValute(new XMLGregorianCalendarImpl());
-			mt910.setIznos(new BigDecimal(1234));
+			mt910.setIznos(BigDecimal.valueOf(250000.00));
 			mt910.setSifraValute("RSD");
 			mt910.setIdPorukeNaloga("id poruke naloga");
 			
@@ -228,9 +228,9 @@ public void nalogWriteAndQueryTest() {
 	public static void main(String[] args) {
 		
 		BankaClientTest bankaTest = new BankaClientTest();
-		//bankaTest.testIt1();
+		bankaTest.testIt1();
 		//bankaTest.testMarkLogicConnection();
-		bankaTest.nalogWriteAndQueryTest();
+		//bankaTest.nalogWriteAndQueryTest();
 
 	}
 
