@@ -20,6 +20,8 @@ import javax.xml.ws.Service;
 public class BankaService extends Service {
 
     public final static URL WSDL_LOCATION;
+    
+    public final static String port = "8080";
 
     public final static QName SERVICE = new QName("http://www.xml2017.com/banka", "BankaService");
     public final static QName Banka = new QName("http://www.xml2017.com/banka", "Banka");
