@@ -1,15 +1,19 @@
 package com.xmlwebservisi2016.firma.service.impl;
 
-import com.xmlwebservisi2016.firma.model.Firma;
+import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.repository.FirmaRepository;
 import com.xmlwebservisi2016.firma.service.FirmaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * Created by Svetozar Stojkovic on 6/9/2017.
  */
+@Service
+@Transactional
 public class JpaFirmaService implements FirmaService {
 
     @Autowired
@@ -17,12 +21,12 @@ public class JpaFirmaService implements FirmaService {
 
     @Override
     public Firma findById(Long id) {
-        return null;
+        return firmaRepository.findById(id);
     }
 
     @Override
-    public List<Firma> findByUsername(String username) {
-        return firmaRepository.findByUsername(username);
+    public Firma findByPib(String pib) {
+        return firmaRepository.findByPib(pib);
     }
 
     @Override
@@ -32,6 +36,6 @@ public class JpaFirmaService implements FirmaService {
 
     @Override
     public Firma dodajFirmu(Firma firma) {
-        return firmaRepository.save(firma);
+        return firmaRepository.saveAndFlush(firma);
     }
 }

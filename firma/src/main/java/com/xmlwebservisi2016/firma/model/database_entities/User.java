@@ -1,4 +1,4 @@
-package com.xmlwebservisi2016.firma.model;
+package com.xmlwebservisi2016.firma.model.database_entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,18 +25,21 @@ public class User implements Serializable {
     @Column(name = "upword")
     private String password;
 
+    //@Column(name = "fid")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fid", referencedColumnName = "fid")
+    private Firma firma;
+
     @Version
     private int version;
 
-    @Column(name = "fid")
-    private String firma;
-
     public User() {}
 
-    public User(String username, String password, int version) {
+    public User(String username, String password, Firma firma, int version) {
         this.username = username;
         this.password = password;
         this.version = version;
+        this.firma = firma;
     }
 
     public long getId() {
@@ -69,5 +72,11 @@ public class User implements Serializable {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public void setFirma(Firma fid) {this.firma = fid;}
+
+    public Firma getFirma() {
+        return firma;
     }
 }

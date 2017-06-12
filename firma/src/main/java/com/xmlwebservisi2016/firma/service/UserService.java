@@ -1,7 +1,7 @@
 package com.xmlwebservisi2016.firma.service;
 
 import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.model.User;
+import com.xmlwebservisi2016.firma.model.database_entities.User;
 
 import java.util.List;
 

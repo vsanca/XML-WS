@@ -1,7 +1,7 @@
 package com.xmlwebservisi2016.firma.service.impl;
 
 import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.model.User;
+import com.xmlwebservisi2016.firma.model.database_entities.User;
 import com.xmlwebservisi2016.firma.repository.UserRepository;
 import com.xmlwebservisi2016.firma.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

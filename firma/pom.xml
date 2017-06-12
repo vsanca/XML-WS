@@ -167,10 +167,11 @@
 						<source>${project.basedir}/../XML-Schema/mt910.xsd</source>
 						<source>${project.basedir}/../XML-Schema/zahtev_za_izvod_schema.xsd</source>
 						<source>${project.basedir}/../XML-Schema/nalog_za_placanje_schema.xsd</source>
+						<source>${project.basedir}/../XML-Schema/faktura.xsd</source>
 					</sources>
 
 					<outputDirectory>${project.basedir}/src/main/java/com/xmlwebservisi2016/firma/model/jaxb</outputDirectory>
-					<clearOutputDir>true</clearOutputDir>
+					<clearOutputDir>false</clearOutputDir>
 
 				</configuration>
 			</plugin>

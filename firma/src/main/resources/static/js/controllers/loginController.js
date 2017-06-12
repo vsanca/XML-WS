@@ -16,7 +16,7 @@ angular.module('firmaApp.LoginController',[])
         $scope.login = function () {
             LoginFactory.login($scope.user).success(function (data) {
                 $localStorage.loggedUser = data;
-                console.log('Logovo se');
+                console.log('Logovo se: '+JSON.stringify(data));
                 //$location.path(...);
             }).error(function () {
                 alert('Login unsuccessful!');

@@ -1,8 +1,6 @@
 package com.xmlwebservisi2016.firma.service;
 
-import com.xmlwebservisi2016.firma.model.Firma;
-import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.model.User;
+import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 
 import java.util.List;
 
@@ -13,7 +11,7 @@ public interface FirmaService {
 
     Firma findById(Long id);
 
-    List<Firma> findByUsername(String username);
+    Firma findByPib(String pib);
 
     List<Firma> findAll();
 

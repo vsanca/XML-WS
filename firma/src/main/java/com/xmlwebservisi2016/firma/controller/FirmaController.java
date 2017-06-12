@@ -1,9 +1,6 @@
 package com.xmlwebservisi2016.firma.controller;
 
-import com.xmlwebservisi2016.firma.model.Firma;
-import com.xmlwebservisi2016.firma.model.User;
-import com.xmlwebservisi2016.firma.model.jaxb.izvod.Izvod;
-import com.xmlwebservisi2016.firma.model.jaxb.zahtev.ZahtevZaIzvod;
+import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.service.FirmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * Created by Svetozar Stojkovic on 6/9/2017.
  */
+@RestController
 public class FirmaController {
 
     @Autowired
@@ -35,6 +34,24 @@ public class FirmaController {
 
         if (firmaRet != null) {
             return new ResponseEntity<Firma>(firmaRet, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+    }
+
+    @RequestMapping(
+            value = "/getAllFirme",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<Firma>> getFirme() {
+
+        List<Firma> firme = firmaService.findAll();
+
+        if (firme != null) {
+            return new ResponseEntity<List<Firma>>(firme, HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

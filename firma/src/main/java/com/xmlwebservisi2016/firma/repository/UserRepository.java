@@ -1,6 +1,6 @@
 package com.xmlwebservisi2016.firma.repository;
 
-import com.xmlwebservisi2016.firma.model.User;
+import com.xmlwebservisi2016.firma.model.database_entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
