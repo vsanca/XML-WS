@@ -14,6 +14,7 @@ import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.xml2017.bankaTipovi.BankaObracunskiRacun;
@@ -30,7 +31,7 @@ public class BankaDataInit {
 		
 		String swiftKod = "AAAABBNS";
 		
-		String docId = "/racun1.xml";
+		String docId = "/racun111-1111111111111-11.xml";
 		String collId = "/racuni";
 		
 		DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -47,6 +48,7 @@ public class BankaDataInit {
 		JAXBHandle<BankaRacunKlijenta> writeHandle = new JAXBHandle<BankaRacunKlijenta>(context);
 		writeHandle.set(racun);
 		
+		System.out.println("Tacno pre write-a");
 		xmlManager.write(docId, metadata, writeHandle);
 		System.out.println("Pisanje racuna klijenta uspesno!");
 		
@@ -69,6 +71,34 @@ public class BankaDataInit {
 		
 		xmlManager.write(docId, metadata, writeHandle1);
 		System.out.println("Pisanje obracunskog uspesno!");
+		
+		QueryManager queryManager = client.newQueryManager();
+		
+		StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+    	StructuredQueryDefinition queryDef = 
+    			queryBuilder.and(
+    					queryBuilder.collection("/racuni"),
+    					queryBuilder.value(
+    							queryBuilder.element("broj-racuna"),
+    							"111-1111111111111-11"));
+    	
+    	System.out.println("Tacno pre search-a!");
+    	
+    	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
+    	
+    	System.out.println("Pronadjeno: " + search.getMatchResults().length);
+    	
+    	StringQueryDefinition query = queryManager.newStringDefinition();
+    	query.setCriteria("");
+    	query.setCollections("/obracunski");
+    	
+    	search = queryManager.search(query, new SearchHandle());
+    	
+    	System.out.println("broj pronadjenih: " + search.getMatchResults().length);
+    	
+    	for (MatchDocumentSummary docSum : search.getMatchResults()) {
+    		System.out.println(docSum.getUri());
+    	}
 			
 	}
 	

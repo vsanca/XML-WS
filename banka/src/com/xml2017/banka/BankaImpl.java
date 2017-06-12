@@ -47,6 +47,7 @@ import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.MatchLocation;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.xml2017.bankaTipovi.BankaObracunskiRacun;
@@ -111,16 +112,24 @@ public class BankaImpl implements Banka {
     	
     	// potrebni su svi nalozi iz tog dana, gde se trazeni broj racuna pojavio
     	// ili kao duznik ili kao poverilac
-    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
-    	StructuredQueryDefinition queryDef = 
-    			queryBuilder.and(
-    					queryBuilder.collection("/nalozi-obradjeni"),
-    					queryBuilder.value(
-    							queryBuilder.element("datum-naloga"),
-    							zahtev.getDatum().toString()),
-    					queryBuilder.value(
-    							queryBuilder.element("broj-racuna"),
-    							zahtev.getBrojRacuna()));
+    	
+//    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+//    	StructuredQueryDefinition queryDef = 
+//    			queryBuilder.and(
+//    					queryBuilder.collection("/nalozi-obradjeni"),
+//    					queryBuilder.value(
+//    							queryBuilder.element("datum-naloga"),
+//    							zahtev.getDatum().toString()),
+//    					queryBuilder.value(
+//    							queryBuilder.element("broj-racuna"),
+//    							zahtev.getBrojRacuna()));
+    	
+    	// ovo je dobro svejedno, jer nalog mora da sadrzi racun bilo kao poverilac
+    	// bilo kao duznik
+    	
+    	StringQueryDefinition queryDef = queryManager.newStringDefinition();
+    	queryDef.setCriteria(zahtev.getBrojRacuna() + " AND " + zahtev.getDatum());
+    	queryDef.setCollections("/nalozi-obradjeni");
     	
     	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
     	
@@ -147,23 +156,23 @@ public class BankaImpl implements Banka {
 		}
     	JAXBHandle<BankaRacunKlijenta> readHandleRacun = new JAXBHandle<BankaRacunKlijenta>(context);
     	
-    	queryDef =
-    			queryBuilder.and(
-    					queryBuilder.collection("/racuni"),
-    					queryBuilder.value(
-    							queryBuilder.element("banka-port"),
-    							BankaService.port),
-    					queryBuilder.value(
-    							queryBuilder.element("broj-racuna"),
-    							zahtev.getBrojRacuna()));
+//    	queryDef =
+//    			queryBuilder.and(
+//    					queryBuilder.collection("/racuni"),
+//    					queryBuilder.value(
+//    							queryBuilder.element("banka-port"),
+//    							BankaService.port),
+//    					queryBuilder.value(
+//    							queryBuilder.element("broj-racuna"),
+//    							zahtev.getBrojRacuna()));
+//    	
+//    	search = queryManager.search(queryDef, new SearchHandle());
+//    	
+//    	if (search.getMatchResults().length != 1) {
+//    		return null;
+//    	}
     	
-    	search = queryManager.search(queryDef, new SearchHandle());
-    	
-    	if (search.getMatchResults().length != 1) {
-    		return null;
-    	}
-    	
-    	xmlDocManager.read(search.getMatchResults()[0].getUri(), readHandleRacun);
+    	xmlDocManager.read("/racun" + zahtev.getBrojRacuna() + ".xml", readHandleRacun);
     	BankaRacunKlijenta racun = readHandleRacun.get();
     	
     	Zaglavlje zaglavlje = new Zaglavlje();
@@ -260,23 +269,27 @@ public class BankaImpl implements Banka {
     	
     	
     	// provera da li je racun uplatioca u ovoj banci
-    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
-    	StructuredQueryDefinition queryDef = 
-    			queryBuilder.and(
-    					queryBuilder.collection("/racuni"),
-    					queryBuilder.value(queryBuilder.element("banka-port"), BankaService.port),
-    					queryBuilder.value(queryBuilder.element("broj-racuna"), nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()));
-    	
-    	SearchHandle searchHandle = queryManager.search(queryDef, new SearchHandle());
     	
     	System.out.println("Provera postojanja racuna duznika u banci");
     	
-    	if (searchHandle.getMatchResults().length != 1) {
-    		System.out.println("Racun ne postoji u banci!");
-    		return false;
-    	}
+//    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+//    	StructuredQueryDefinition queryDef = 
+//    			queryBuilder.and(
+//    					queryBuilder.collection("/racuni"),
+//    					queryBuilder.value(queryBuilder.element("banka-port"), BankaService.port),
+//    					queryBuilder.value(queryBuilder.element("broj-racuna"), nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()));
+//    	
+//    	SearchHandle searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    	
+//    	
+//    	
+//    	if (searchHandle.getMatchResults().length != 1) {
+//    		System.out.println("Racun ne postoji u banci!");
+//    		return false;
+//    	}   	
     	
-    	String docIdDuznik = searchHandle.getMatchResults()[0].getUri();
+    	
+    	String docIdDuznik = "/racun" + nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna() + ".xml";
     	
     	JAXBContext context;
     	try {
@@ -292,26 +305,31 @@ public class BankaImpl implements Banka {
     	
     	BankaRacunKlijenta duznik = readHandle.get();
     	
+    	if (duznik.getBankaPort() != BankaService.port) {
+    		return false;
+    	}
+    	
     	System.out.println("Racun duznika pronadjen i procitan");
     	
     	
     	// provera da li racun primaoca postoji i da li je u ovoj banci
-    	queryDef = 
-    			queryBuilder.and(
-    					queryBuilder.collection("/racuni"),
-    					queryBuilder.value(queryBuilder.element("broj-racuna"), nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna()));
     	
-    	searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    	queryDef = 
+//    			queryBuilder.and(
+//    					queryBuilder.collection("/racuni"),
+//    					queryBuilder.value(queryBuilder.element("broj-racuna"), nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna()));
+//    	
+//    	searchHandle = queryManager.search(queryDef, new SearchHandle());
     	
     	System.out.println("Provera postojanja racuna poverioca");
     	
-    	// mora postojati tacno jedan racun koji odgovara poveriocu
-    	if (searchHandle.getMatchResults().length != 1) {
-    		System.out.println("Nije pronadjen jedan racun koji odgovara poveriocu!");
-    		return false;
-    	}
+//    	// mora postojati tacno jedan racun koji odgovara poveriocu
+//    	if (searchHandle.getMatchResults().length != 1) {
+//    		System.out.println("Nije pronadjen jedan racun koji odgovara poveriocu!");
+//    		return false;
+//    	}
     	
-    	String docIdPoverilac = searchHandle.getMatchResults()[0].getUri();
+    	String docIdPoverilac = "/racun" + nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna() + ".xml";;
     	
     	readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
     	
@@ -593,14 +611,28 @@ public class BankaImpl implements Banka {
 				}
     			JAXBHandle<NalogZaPrenos> readHandleNalog = new JAXBHandle<NalogZaPrenos>(context);
     			
-    			queryDef = queryBuilder.collection("/nalozi-neobradjeni");
+//    			queryDef = queryBuilder.collection("/nalozi-neobradjeni");
     			
-    			searchHandle = queryManager.search(queryDef, new SearchHandle());
+                StringQueryDefinition queryDef = queryManager.newStringDefinition();
+    			
+    			queryDef.setCriteria("");
+    			queryDef.setCollections("/nalozi-neobradjeni");
+    			
+    			SearchHandle searchHandle = queryManager.search(queryDef, new SearchHandle());
+    		
     			
     			for (MatchDocumentSummary docSum : searchHandle.getMatchResults()) {
     				xmlDocManager.read(docSum.getUri(), readHandleNalog);
     				neobradjeniNalozi.add(readHandleNalog.get());
     			}
+    			
+    			try {
+					context = JAXBContext.newInstance(BankaRacunKlijenta.class);
+				} catch (JAXBException e2) {
+					e2.printStackTrace();
+					return false;
+				}
+    			readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
     			
     			// prodji kroz sve naloge koji su neobradjeni i nadji one izmedju ove dve banke
     			for (NalogZaPrenos neobradjeni : neobradjeniNalozi) {
@@ -609,31 +641,43 @@ public class BankaImpl implements Banka {
     				// i port banke racuna duznika iz naloga koji se obradjuje -> ako postoji jedan,
     				// to znaci da je duznik iz neobradjenog iz iste banke kao i duznik iz
     				// naloga koji se trenutno obradjuje
-    				queryDef =
-        					queryBuilder.and(
-        							queryBuilder.collection("/racuni"),
-        							queryBuilder.value(queryBuilder.element("banka-port"), duznik.getBankaPort()),
-        							queryBuilder.value(queryBuilder.element("broj-racuna"), neobradjeni.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()));
     				
-    				searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    				queryDef =
+//        					queryBuilder.and(
+//        							queryBuilder.collection("/racuni"),
+//        							queryBuilder.value(queryBuilder.element("banka-port"), duznik.getBankaPort()),
+//        							queryBuilder.value(queryBuilder.element("broj-racuna"), neobradjeni.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna()));
+//    				
+//    				searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    				
+//    				if (searchHandle.getMatchResults().length != 1) {
+//    					break;
+//    				}
     				
-    				if (searchHandle.getMatchResults().length != 1) {
+    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna() + ".xml", readHandle);
+    				if (!readHandle.get().getBankaPort().equals(duznik.getBankaPort())) {
     					break;
-    				}
+    				}	
     				
     				// pronadji racun tako da se poklapaju broj racuna iz poverioca neobradjenog
     				// i port banke racuna poverioca iz naloga koji se obradjuje -> ako postoji jedan,
     				// to znaci da je poverioc iz neobradjenog iz iste banke kao i poverioc iz
     				// naloga koji se trenutno obradjuje
-    				queryDef =
-        					queryBuilder.and(
-        							queryBuilder.collection("/racuni"),
-        							queryBuilder.value(queryBuilder.element("banka-port"), poverilac.getBankaPort()),
-        							queryBuilder.value(queryBuilder.element("broj-racuna"), neobradjeni.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna()));
     				
-    				searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    				queryDef =
+//        					queryBuilder.and(
+//        							queryBuilder.collection("/racuni"),
+//        							queryBuilder.value(queryBuilder.element("banka-port"), poverilac.getBankaPort()),
+//        							queryBuilder.value(queryBuilder.element("broj-racuna"), neobradjeni.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna()));
+//    				
+//    				searchHandle = queryManager.search(queryDef, new SearchHandle());
+//    				
+//    				if (searchHandle.getMatchResults().length != 1) {
+//    					break;
+//    				}
     				
-    				if (searchHandle.getMatchResults().length != 1) {
+    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna() + ".xml", readHandle);
+    				if (!readHandle.get().getBankaPort().equals(poverilac.getBankaPort())) {
     					break;
     				}
     				
@@ -777,18 +821,18 @@ public class BankaImpl implements Banka {
         			
             		for (TPojedinacnoPlacanje placanje : mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje()) {
             			
-            			queryDef = 
-            					queryBuilder.and(
-            							queryBuilder.collection("/racuni"),
-            							queryBuilder.value(queryBuilder.element("broj-racuna"), placanje.getRacunDuznika()));
+//            			queryDef = 
+//            					queryBuilder.and(
+//            							queryBuilder.collection("/racuni"),
+//            							queryBuilder.value(queryBuilder.element("broj-racuna"), placanje.getRacunDuznika()));
             			
-            			searchHandle = queryManager.search(queryDef, new SearchHandle());
+//            			searchHandle = queryManager.search(queryDef, new SearchHandle());
+//            			
+//            			if (searchHandle.getMatchResults().length != 1) {
+//            				return false;
+//            			}
             			
-            			if (searchHandle.getMatchResults().length != 1) {
-            				return false;
-            			}
-            			
-            			String docIdRacun = searchHandle.getMatchResults()[0].getUri();
+            			String docIdRacun = "/racun" + placanje.getRacunDuznika() + ".xml";
             			
             			try {
 							context = JAXBContext.newInstance(BankaRacunKlijenta.class);
@@ -930,7 +974,7 @@ public class BankaImpl implements Banka {
     	
     	XMLDocumentManager xmlDocManager = dbClient.newXMLDocumentManager();
     	
-    	QueryManager queryManager = dbClient.newQueryManager();
+//    	QueryManager queryManager = dbClient.newQueryManager();
     	
     	System.out.println("Uskladjivanje obracunskog racuna");
     	
@@ -942,48 +986,47 @@ public class BankaImpl implements Banka {
 			return;
 		}
     	
-    	System.out.println("Prosao je kontekst");
     	JAXBHandle<BankaObracunskiRacun> readHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
-    	System.out.println("Prosao je handle");
     	DocumentMetadataHandle metadata = new DocumentMetadataHandle();
     	metadata.getCollections().add("/obracunski");
-    	System.out.println("Prosao je metadata");
     	
     	xmlDocManager.read("/obracunskiRacun" + BankaService.port, readHandleObracunski);
-    	System.out.println("Prosao je read");
     	BankaObracunskiRacun obracunski = readHandleObracunski.get();
-    	System.out.println("Obracunski je postavljen");
     	
-    	System.out.println("Obracunski SWIFT: " + obracunski.getSwiftKod());
     	obracunski.setStanje(BigDecimal.valueOf(obracunski.getStanje().doubleValue() - 
     			mt103.getUplata().getIznos().doubleValue()));
     	
-    	System.out.println("Azurirano stanje");
     	
     	JAXBHandle<BankaObracunskiRacun> writeHandleObracunski = new JAXBHandle<BankaObracunskiRacun>(context);
     	writeHandleObracunski.set(obracunski);
     	
-    	System.out.println("Tacno pre write-a");
     	xmlDocManager.write("/obracunskiRacun" + BankaService.port, metadata, writeHandleObracunski);
     	
     	System.out.println("Obracunski racun azuriran");
     	System.out.println("Uskladivanje racuna klijenta");
     	
-    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
-    	StructuredQueryDefinition queryDef = 
-    			queryBuilder.and(
-    					queryBuilder.collection("/racuni"),
-    					queryBuilder.value(
-    							queryBuilder.element("broj-racuna"),
-    							mt103.getUplata().getPoverilacOdobrenje().getRacun()));
+//    	StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
+//    	StructuredQueryDefinition queryDef = 
+//    			queryBuilder.and(
+//    					queryBuilder.collection("/racuni"),
+//    					queryBuilder.value(
+//    							queryBuilder.element("broj-racuna"),
+//    							mt103.getUplata().getPoverilacOdobrenje().getRacun()));
+//    	
+//    	System.out.println("Tacno pre search-a!");
+//    	
+//    	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
+//    	
+//    	System.out.println("Pronadjeno: " + search.getMatchResults().length);
+//    	
+//    	if (search.getMatchResults().length != 1) {
+//    		System.out.println("Nije pronadjen racun poverioca!");
+//    		return;
+//    	}
     	
-    	SearchHandle search = queryManager.search(queryDef, new SearchHandle());
+    	String docIdRacun = "/racun" + mt103.getUplata().getPoverilacOdobrenje().getRacun() + ".xml";
     	
-    	if (search.getMatchResults().length != 1) {
-    		return;
-    	}
-    	
-    	String docIdRacun = search.getMatchResults()[0].getUri();
+    	System.out.println(docIdRacun);
     	
     	try {
 			context = JAXBContext.newInstance(BankaRacunKlijenta.class);
@@ -998,6 +1041,8 @@ public class BankaImpl implements Banka {
     	
     	metadata = new DocumentMetadataHandle();
     	metadata.getCollections().add("/racuni");
+    	
+    	System.out.println("Postavlja stanje");
     	
     	poverilacRacun.setStanje(BigDecimal.valueOf(poverilacRacun.getStanje().doubleValue() + 
     			mt103.getUplata().getIznos().doubleValue()));
@@ -1025,6 +1070,8 @@ public class BankaImpl implements Banka {
     	metadata.getCollections().add("/mt910");
     	
     	xmlDocManager.write("/mt910" + mt910.getIdPoruke(), metadata, writeHandleMt910);
+    	
+    	System.out.println("sacuvan mt910");
     	
     }
 
@@ -1091,20 +1138,20 @@ public class BankaImpl implements Banka {
 		
 		for (TPojedinacnoPlacanje placanje : mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje()) {
 			
-			queryDef = 
-					queryBuilder.and(
-							queryBuilder.collection("/racuni"),
-							queryBuilder.value(
-									queryBuilder.element("broj-racuna"),
-									placanje.getRacunPoverioca()));
+//			queryDef = 
+//					queryBuilder.and(
+//							queryBuilder.collection("/racuni"),
+//							queryBuilder.value(
+//									queryBuilder.element("broj-racuna"),
+//									placanje.getRacunPoverioca()));
+//			
+//			searchHandle = queryManager.search(queryDef, new SearchHandle());
+//			
+//			if (searchHandle.getMatchResults().length != 1) {
+//				return;
+//			}
 			
-			searchHandle = queryManager.search(queryDef, new SearchHandle());
-			
-			if (searchHandle.getMatchResults().length != 1) {
-				return;
-			}
-			
-			String docIdRacun = searchHandle.getMatchResults()[0].getUri();
+			String docIdRacun = "/racun" + placanje.getRacunPoverioca() + ".xml";
 			
 			readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
 			

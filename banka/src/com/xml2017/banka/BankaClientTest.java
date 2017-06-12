@@ -17,6 +17,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import com.xml2017.schema.izvod.Izvod;
 import com.xml2017.schema.mt103.Mt103;
 import com.xml2017.schema.mt103.Mt103.Banke;
 import com.xml2017.schema.mt910.Mt910;
@@ -26,7 +27,7 @@ import com.xml2017.schema.tipovi_podataka.TBanka;
 import com.xml2017.schema.tipovi_podataka.TOsobaPrenos;
 import com.xml2017.schema.tipovi_podataka.TPlacanje;
 import com.xml2017.schema.tipovi_podataka.TUplata;
-
+import com.xml2017.schema.zahtev.ZahtevZaIzvod;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
@@ -111,7 +112,12 @@ public void testIt1() {
 			mt910.setSifraValute("RSD");
 			mt910.setIdPorukeNaloga("id poruke naloga");
 			
+			System.out.println("Poziv banke");
+			
 			banka.rtgsBanka(mt103, mt910);
+			
+			System.out.println("Izvrseno");
+			
 			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -225,12 +231,58 @@ public void nalogWriteAndQueryTest() {
 	
 }
 
+
+public void testIt2() {
+	
+	try {
+		URL wsdlLocation = new URL("http://localhost:8080/banka/services/Banka?wsdl");
+		QName serviceName = new QName("http://www.xml2017.com/banka", "BankaService");
+		QName portName = new QName("http://www.xml2017.com/banka", "Banka");
+
+		Service service = Service.create(wsdlLocation, serviceName);
+		
+		Banka banka = service.getPort(portName, Banka.class); 
+		
+		GregorianCalendar gregor = new GregorianCalendar();
+		Date date = new Date();
+		gregor.setTime(date);
+		XMLGregorianCalendar xmlGregor = null;
+		try {
+			xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+					gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+					gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		ZahtevZaIzvod zahtevZaIzvod = new ZahtevZaIzvod();
+		zahtevZaIzvod.setDatum(xmlGregor);
+		zahtevZaIzvod.setRedniBrojPreseka(1);
+		zahtevZaIzvod.setBrojRacuna("111-1111111111111-11");
+		
+		System.out.println("Poziv banke");
+		
+		Izvod izvod = banka.preuzimanjeIzvoda(zahtevZaIzvod);
+		
+		System.out.println("izvod prethodno: " + izvod.getZaglavlje().getPrethodnoStanje());
+		System.out.println("izvod trenutno:" + izvod.getZaglavlje().getNovoStanje());
+		System.out.println("izvod broj preseka: " + izvod.getZaglavlje().getBrojPreseka());
+		
+		System.out.println("Izvrseno");
+		
+	} catch (MalformedURLException e) {
+		e.printStackTrace();
+	}
+
+}
+
 	public static void main(String[] args) {
 		
 		BankaClientTest bankaTest = new BankaClientTest();
 		bankaTest.testIt1();
 		//bankaTest.testMarkLogicConnection();
 		//bankaTest.nalogWriteAndQueryTest();
+		//bankaTest.testIt2();
 
 	}
 

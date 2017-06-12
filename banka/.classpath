@@ -2,24 +2,23 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/java-client-api-3.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/java-client-api-3.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-apache-client4-1.17.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-client-1.17.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-core-1.17.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-multipart-1.17.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.4.jar"/>
 	<classpathentry kind="lib" path="lib/javaee-api-6.0-4-tomcat.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/slf4j-api-1.7.4.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jackson-annotations-2.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jackson-core-2.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jackson-databind-2.4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/httpclient-4.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/httpcore-4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jersey-apache-client4-1.17.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jersey-client-1.17.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jersey-core-1.17.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/jersey-multipart-1.17.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/commons-codec-1.7.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/logback-classic-1.1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/logback-core-1.1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/mimepull-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Temp/XML i Web servisi/vezbe/4. XQuery/lib/mimepull-1.9.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Hp/Downloads/jersey-bundle-1.19.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/logback-classic-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/logback-core-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/mimepull-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/mimepull-1.9.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
