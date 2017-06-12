@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
                       serviceName = "CentralnaBankaService",
                       portName = "CentralnaBanka",
                       targetNamespace = "http://www.xml2017.com/centralna_banka",
-                      wsdlLocation = "file:/E:/FTN/8. semestar/XML-WS/Projekat/XML-WS/centralna_banka/WEB-INF/wsdl/centralna_banka.wsdl",
+                      wsdlLocation = "WEB-INF/wsdl/centralna_banka.wsdl",
                       endpointInterface = "com.xml2017.centralna_banka.CentralnaBanka")
                       
 public class CentralnaBankaImpl implements CentralnaBanka {
