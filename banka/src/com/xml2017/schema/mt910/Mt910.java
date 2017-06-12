@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -44,6 +45,7 @@ import com.xml2017.schema.tipovi_podataka.TBanka;
     "iznos",
     "sifraValute"
 })
+@XmlRootElement(name = "mt910")
 public class Mt910 {
 
     @XmlElement(name = "id_poruke", required = true)

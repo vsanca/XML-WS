@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/logback-core-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/mimepull-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/mimepull-1.9.4.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-bundle-1.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

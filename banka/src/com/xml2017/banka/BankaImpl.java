@@ -172,7 +172,7 @@ public class BankaImpl implements Banka {
 //    		return null;
 //    	}
     	
-    	xmlDocManager.read("/racun" + zahtev.getBrojRacuna() + ".xml", readHandleRacun);
+    	xmlDocManager.read("/racun" + zahtev.getBrojRacuna(), readHandleRacun);
     	BankaRacunKlijenta racun = readHandleRacun.get();
     	
     	Zaglavlje zaglavlje = new Zaglavlje();
@@ -289,7 +289,7 @@ public class BankaImpl implements Banka {
 //    	}   	
     	
     	
-    	String docIdDuznik = "/racun" + nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna() + ".xml";
+    	String docIdDuznik = "/racun" + nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna();
     	
     	JAXBContext context;
     	try {
@@ -305,7 +305,7 @@ public class BankaImpl implements Banka {
     	
     	BankaRacunKlijenta duznik = readHandle.get();
     	
-    	if (duznik.getBankaPort() != BankaService.port) {
+    	if (!duznik.getBankaPort().equals(BankaService.port)) {
     		return false;
     	}
     	
@@ -329,7 +329,7 @@ public class BankaImpl implements Banka {
 //    		return false;
 //    	}
     	
-    	String docIdPoverilac = "/racun" + nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna() + ".xml";;
+    	String docIdPoverilac = "/racun" + nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna();
     	
     	readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
     	
@@ -654,7 +654,7 @@ public class BankaImpl implements Banka {
 //    					break;
 //    				}
     				
-    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna() + ".xml", readHandle);
+    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna(), readHandle);
     				if (!readHandle.get().getBankaPort().equals(duznik.getBankaPort())) {
     					break;
     				}	
@@ -676,7 +676,7 @@ public class BankaImpl implements Banka {
 //    					break;
 //    				}
     				
-    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna() + ".xml", readHandle);
+    				xmlDocManager.read("/racun" + neobradjeni.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna(), readHandle);
     				if (!readHandle.get().getBankaPort().equals(poverilac.getBankaPort())) {
     					break;
     				}
@@ -743,6 +743,32 @@ public class BankaImpl implements Banka {
     					placanja.getPojedinacnoPlacanje().add(placanje);
     					ukupanIznos += placanje.getIznos().doubleValue();
     				}
+    				
+    				// dodaj i trenutni nalog
+    				TPojedinacnoPlacanje trenutnoPlacanje = new TPojedinacnoPlacanje();
+					
+    				trenutnoPlacanje.setDatumNaloga(nalog.getDatumNaloga());
+    				trenutnoPlacanje.setIDNalogaZaPlacanje(nalog.getIdPoruke());
+    				trenutnoPlacanje.setDuznikNalogodavac(nalog.getDuznikNalogodavac());
+    				trenutnoPlacanje.setPrimalacPoverilac(nalog.getPrimalacPoverilac());
+    				trenutnoPlacanje.setSvrhaPlacanja(nalog.getSvrhaPlacanja());
+					
+    				trenutnoPlacanje.setRacunDuznika(nalog.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna());
+    				trenutnoPlacanje.setPozivNaBrojZaduzenja(nalog.getPodaciOPrenosu().getDuznikPrenos().getPozivNaBroj());
+    				trenutnoPlacanje.setModelZaduzenja(nalog.getPodaciOPrenosu().getDuznikPrenos().getModel());
+					
+    				trenutnoPlacanje.setRacunPoverioca(nalog.getPodaciOPrenosu().getPoverilacPrenos().getBrojRacuna());
+    				trenutnoPlacanje.setPozivNaBrojOdobrenja(nalog.getPodaciOPrenosu().getPoverilacPrenos().getPozivNaBroj());
+    				trenutnoPlacanje.setModelOdobrenja(nalog.getPodaciOPrenosu().getPoverilacPrenos().getModel());
+					
+    				trenutnoPlacanje.setIznos(nalog.getPodaciOPrenosu().getIznos());
+    				trenutnoPlacanje.setSifraValute(nalog.getPodaciOPrenosu().getOznakaValute());
+					
+					placanja.getPojedinacnoPlacanje().add(trenutnoPlacanje);
+					ukupanIznos += trenutnoPlacanje.getIznos().doubleValue();
+    				
+    				// dodaj i peti nalog (koji se trenutno obradjuje)
+    				
     				
     				mt102.setPojedinacnaPlacanja(placanja);
     				mt102.setUkupanIznos(BigDecimal.valueOf(ukupanIznos));
@@ -832,7 +858,7 @@ public class BankaImpl implements Banka {
 //            				return false;
 //            			}
             			
-            			String docIdRacun = "/racun" + placanje.getRacunDuznika() + ".xml";
+            			String docIdRacun = "/racun" + placanje.getRacunDuznika();
             			
             			try {
 							context = JAXBContext.newInstance(BankaRacunKlijenta.class);
@@ -1024,7 +1050,7 @@ public class BankaImpl implements Banka {
 //    		return;
 //    	}
     	
-    	String docIdRacun = "/racun" + mt103.getUplata().getPoverilacOdobrenje().getRacun() + ".xml";
+    	String docIdRacun = "/racun" + mt103.getUplata().getPoverilacOdobrenje().getRacun();
     	
     	System.out.println(docIdRacun);
     	
@@ -1063,11 +1089,18 @@ public class BankaImpl implements Banka {
 			e.printStackTrace();
 			return;
 		}
+    	
+    	System.out.println("Postavljen kontekst");
+    	
     	JAXBHandle<Mt910> writeHandleMt910 = new JAXBHandle<Mt910>(context);
     	writeHandleMt910.set(mt910);
     	
+    	System.out.println("Postavljen writeHandle");
+    	
     	metadata = new DocumentMetadataHandle();
     	metadata.getCollections().add("/mt910");
+    	
+    	System.out.println("Tacno pre write-a!");
     	
     	xmlDocManager.write("/mt910" + mt910.getIdPoruke(), metadata, writeHandleMt910);
     	
@@ -1151,7 +1184,7 @@ public class BankaImpl implements Banka {
 //				return;
 //			}
 			
-			String docIdRacun = "/racun" + placanje.getRacunPoverioca() + ".xml";
+			String docIdRacun = "/racun" + placanje.getRacunPoverioca();
 			
 			readHandle = new JAXBHandle<BankaRacunKlijenta>(context);
 			
