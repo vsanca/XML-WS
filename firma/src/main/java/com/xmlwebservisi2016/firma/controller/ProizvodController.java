@@ -185,8 +185,11 @@ public class ProizvodController {
                 }
 
                 Zaglavlje zaglavlje = Converter.fromFakturaZaglavljeToZaglavlje(fakturaZaglavlje);
+                zaglavlje.setPotvrdjeno(false);
+                zaglavlje.setZavrseno(false);
 
                 Zaglavlje zaglavljeRet = zaglavljeService.dodajIliIzmeniZaglavlje(zaglavlje);
+
                 if (zaglavljeRet != null) {
                     List<Stavka> stavke = Converter.fromFakturaZaglavljeToStavka(fakturaZaglavlje);
                     for (Stavka stavka : stavke) {

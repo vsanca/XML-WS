@@ -3,16 +3,12 @@ package com.xmlwebservisi2016.firma.controller;
 import com.xmlwebservisi2016.firma.dto.PibsDTO;
 import com.xmlwebservisi2016.firma.dto.UserFirmaDTO;
 import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.model.database_entities.Firma;
-import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
-import com.xmlwebservisi2016.firma.model.database_entities.User;
-import com.xmlwebservisi2016.firma.model.database_entities.Zaglavlje;
+import com.xmlwebservisi2016.firma.model.database_entities.*;
 import com.xmlwebservisi2016.firma.model.jaxb.faktura_zaglavlje.FakturaZaglavlje;
 import com.xmlwebservisi2016.firma.model.jaxb.prenos.NalogZaPrenos;
+import com.xmlwebservisi2016.firma.model.jaxb.tipovi_podataka.TFakturaStavka;
 import com.xmlwebservisi2016.firma.model.jaxb.tipovi_podataka.TOsobaPrenos;
-import com.xmlwebservisi2016.firma.service.FirmaService;
-import com.xmlwebservisi2016.firma.service.StavkaService;
-import com.xmlwebservisi2016.firma.service.ZaglavljeService;
+import com.xmlwebservisi2016.firma.service.*;
 import com.xmlwebservisi2016.firma.util.Converter;
 import com.xmlwebservisi2016.firma.websockets.FirmaWebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +41,12 @@ public class FaktureController {
     @Autowired
     private FirmaService firmaService;
 
+    @Autowired
+    private BankaService bankaService;
+
+    @Autowired
+    private ProizvodService proizvodService;
+
 
     /**
      *  Ovu metodu poziva kupac firma nakon sto je dobio signal da je kupovina potvrdjena
@@ -51,12 +54,12 @@ public class FaktureController {
      * @return
      */
     @RequestMapping(
-            value = "/zavrsiKupovinu",
+            value = "/get_nalog_za_prenos",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<NalogZaPrenos> zavrsiKupovinu(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+    public ResponseEntity<NalogZaPrenos> dobijNalogZaPrenos(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
 
         try {
             Firma prodavac = firmaService.findByPib(fakturaZaglavlje.getPibDobavljaca());
@@ -95,8 +98,6 @@ public class FaktureController {
 
                 zaglavljeService.dodajIliIzmeniZaglavlje(zaglavlje);
 
-                // ovde se gadja web servis u banci
-
                 new FirmaWebSocket().displayMessageToActiveUsers();
 
                 return new ResponseEntity<NalogZaPrenos>(nalogZaPrenos, HttpStatus.OK);
@@ -110,6 +111,81 @@ public class FaktureController {
 
     }
 
+
+    @RequestMapping(
+            value = "/posalji_nalog_za_prenos",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Boolean> posaljiNalogZaPrenosBanci(@RequestBody NalogZaPrenos nalogZaPrenos) {
+        Objects.requireNonNull(nalogZaPrenos);
+        try {
+            Firma firma = firmaService.findByBrojRacuna(nalogZaPrenos.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna());
+            boolean retVal = false;
+            if (firma != null) {
+                retVal = bankaService.slanjeNalogaZaPlacanje(nalogZaPrenos, firma);
+            }
+
+            return new ResponseEntity<Boolean>(retVal, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+    }
+
+    /**
+     * Ako je poslat nalog za prenos ispravno stanje proizvoda se menja
+     * @param fakturaZaglavlje
+     * @return
+     */
+    @RequestMapping(
+            value = "/novo_stanje_proizvoda",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Boolean> novoStanjeProizvoda(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+        try {
+            for (TFakturaStavka fakturaStavka : fakturaZaglavlje.getFakturaStavka()) {
+                Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke(fakturaZaglavlje.getIdPoruke());
+                if (zaglavlje != null) {
+                    Stavka stavka = stavkaService.findByZaglavljeAndRedniBroj(zaglavlje, fakturaStavka.getRedniBroj());
+                    if (stavka != null) {
+                        BigDecimal kolicina = stavka.getKolicina();
+                        Proizvod proizvod = stavka.getProizvod();
+                        proizvod.setKolicina(proizvod.getKolicina() - kolicina.longValue());
+                        Firma kupac = firmaService.findByPib(fakturaZaglavlje.getPibKupca());
+                        if (kupac != null) {
+                            if (proizvodService.dodajIliIzmeniProizvod(proizvod) != null) {
+                                Proizvod kupacProizvod = proizvodService.findByNazivAndFirma(proizvod.getNaziv(), kupac);
+                                if (kupacProizvod != null) {
+                                    kupacProizvod.setKolicina(kupacProizvod.getKolicina() + kolicina.longValue());
+                                    proizvodService.dodajIliIzmeniProizvod(kupacProizvod);
+                                } else {
+                                    proizvod.setKolicina(kolicina.longValue());
+                                    proizvod.setFirma(kupac);
+                                    proizvodService.dodajIliIzmeniProizvod(proizvod);
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+
+            }
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Boolean>(false, HttpStatus.FORBIDDEN);
+        }
+    }
+
+    /**
+     *  Ovu metodu prodavac poziva kada zeli da odobri kupovinu izabranih proizvoda
+     * @param fakturaZaglavlje
+     * @return
+     */
     @RequestMapping(
             value = "/potvrdiKupovinu",
             method = RequestMethod.POST,
@@ -133,6 +209,11 @@ public class FaktureController {
 
     }
 
+    /**
+     * Odbijanje kupovine od strane kupca ili prodavca
+     * @param fakturaZaglavlje
+     * @return
+     */
     @RequestMapping(
             value = "/odbijKupovinu",
             method = RequestMethod.POST,

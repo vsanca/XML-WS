@@ -13,6 +13,8 @@ public interface FirmaService {
 
     Firma findByPib(String pib);
 
+    Firma findByBrojRacuna(String brojRacuna);
+
     List<Firma> findAll();
 
     Firma dodajFirmu(Firma firma);

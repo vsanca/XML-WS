@@ -30,6 +30,11 @@ public class JpaFirmaService implements FirmaService {
     }
 
     @Override
+    public Firma findByBrojRacuna(String brojRacuna) {
+        return firmaRepository.findByBrojRacuna(brojRacuna);
+    }
+
+    @Override
     public List<Firma> findAll() {
         return firmaRepository.findAll();
     }

@@ -35,6 +35,10 @@ public class Stavka {
     protected BigDecimal umanjenoZaRabat;
     @Column(name = "ukupan_porez")
     protected BigDecimal ukupanPorez;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pid", referencedColumnName = "pid")
+    protected Proizvod proizvod;
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_poruke", referencedColumnName = "id_poruke")
@@ -43,7 +47,7 @@ public class Stavka {
     public Stavka() {
     }
 
-    public Stavka(int redniBroj, String nazivRobeIliUsluge, BigDecimal kolicina, String jedinicaMere, BigDecimal jedinicnaCena, BigDecimal vrednost, BigDecimal procenatRabata, BigDecimal iznosRabata, BigDecimal umanjenoZaRabat, BigDecimal ukupanPorez, Zaglavlje zaglavlje) {
+    public Stavka(int redniBroj, String nazivRobeIliUsluge, BigDecimal kolicina, String jedinicaMere, BigDecimal jedinicnaCena, BigDecimal vrednost, BigDecimal procenatRabata, BigDecimal iznosRabata, BigDecimal umanjenoZaRabat, BigDecimal ukupanPorez, Proizvod proizvod, Zaglavlje zaglavlje) {
         this.redniBroj = redniBroj;
         this.nazivRobeIliUsluge = nazivRobeIliUsluge;
         this.kolicina = kolicina;
@@ -54,6 +58,7 @@ public class Stavka {
         this.iznosRabata = iznosRabata;
         this.umanjenoZaRabat = umanjenoZaRabat;
         this.ukupanPorez = ukupanPorez;
+        this.proizvod = proizvod;
         this.zaglavlje = zaglavlje;
     }
 
@@ -143,5 +148,13 @@ public class Stavka {
 
     public void setZaglavlje(Zaglavlje zaglavlje) {
         this.zaglavlje = zaglavlje;
+    }
+
+    public Proizvod getProizvod() {
+        return proizvod;
+    }
+
+    public void setProizvod(Proizvod proizvod) {
+        this.proizvod = proizvod;
     }
 }
