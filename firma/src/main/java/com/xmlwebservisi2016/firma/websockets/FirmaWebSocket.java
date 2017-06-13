@@ -54,7 +54,8 @@ public class FirmaWebSocket {
 
         sessions.put(userId, session);
 
-        mojeFakture(userId);
+        faktureZaPotvrdu(userId);
+        potvrdjeneFakture(userId);
 
         System.out.println(session.getId() + " has opened a connection");
 //        try {
@@ -94,7 +95,7 @@ public class FirmaWebSocket {
         System.out.println("Session " +session.getId()+" has ended");
     }
 
-    private void mojeFakture(String userId) {
+    private void faktureZaPotvrdu(String userId) {
         User foundUser = userService.findById(Long.parseLong(userId));
 
         Firma firma = foundUser.getFirma();
@@ -122,10 +123,39 @@ public class FirmaWebSocket {
         }
     }
 
+    private void potvrdjeneFakture(String userId) {
+        User foundUser = userService.findById(Long.parseLong(userId));
+
+        Firma firma = foundUser.getFirma();
+
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
+
+        List<FakturaZaglavlje> fakture = new ArrayList<>();
+
+        for (Zaglavlje zaglavlje : zaglavljaUToku) {
+            FakturaZaglavlje fakturaZaglavlje = Converter.fromZaglavljeToFakturaZaglavlje(zaglavlje);
+            List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
+            for (Stavka stavka : stavke) {
+                fakturaZaglavlje.getFakturaStavka().add(Converter.fromStavkaToTFakturaStavka(stavka));
+            }
+            fakture.add(fakturaZaglavlje);
+        }
+
+        Session session = sessions.get(userId);
+        if (session != null && session.isOpen()) {
+            try {
+                session.getBasicRemote().sendText(Converter.getJSONString(fakture));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void displayMessageToActiveUsers() {
         System.out.println("Displaying messages to active users");
         for (String userId : sessions.keySet()) {
-            mojeFakture(userId);
+            faktureZaPotvrdu(userId);
+            potvrdjeneFakture(userId);
         }
     }
 }

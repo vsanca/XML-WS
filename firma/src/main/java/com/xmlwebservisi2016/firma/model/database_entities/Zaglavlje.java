@@ -52,13 +52,15 @@ public class Zaglavlje {
     protected String uplataNaRacun;
     @Column(name = "datum_valute")
     protected Date datumValute;
+    @Column(name = "potvrdjeno")
+    protected boolean potvrdjeno;
     @Column(name = "zavrseno")
     protected boolean zavrseno;
 
     public Zaglavlje() {
     }
 
-    public Zaglavlje(String idPoruke, String nazivDobavljaca, String adresaDobavljaca, String pibDobavljaca, String nazivKupca, String adresaKupca, String pibKupca, long brojRacuna, Date datumRacuna, BigDecimal vrednostRobe, BigDecimal vrednostUsluga, BigDecimal ukupnoRobaIUsluge, BigDecimal ukupanRabat, BigDecimal ukupanPorez, String oznakaValute, BigDecimal iznosZaUplatu, String uplataNaRacun, Date datumValute, boolean zavrseno) {
+    public Zaglavlje(String idPoruke, String nazivDobavljaca, String adresaDobavljaca, String pibDobavljaca, String nazivKupca, String adresaKupca, String pibKupca, long brojRacuna, Date datumRacuna, BigDecimal vrednostRobe, BigDecimal vrednostUsluga, BigDecimal ukupnoRobaIUsluge, BigDecimal ukupanRabat, BigDecimal ukupanPorez, String oznakaValute, BigDecimal iznosZaUplatu, String uplataNaRacun, Date datumValute, boolean potvrdjeno, boolean zavrseno) {
         this.idPoruke = idPoruke;
         this.nazivDobavljaca = nazivDobavljaca;
         this.adresaDobavljaca = adresaDobavljaca;
@@ -77,6 +79,7 @@ public class Zaglavlje {
         this.iznosZaUplatu = iznosZaUplatu;
         this.uplataNaRacun = uplataNaRacun;
         this.datumValute = datumValute;
+        this.potvrdjeno = potvrdjeno;
         this.zavrseno = zavrseno;
     }
 
@@ -230,5 +233,13 @@ public class Zaglavlje {
 
     public void setZavrseno(boolean zavrseno) {
         this.zavrseno = zavrseno;
+    }
+
+    public boolean isPotvrdjeno() {
+        return potvrdjeno;
+    }
+
+    public void setPotvrdjeno(boolean potvrdjeno) {
+        this.potvrdjeno = potvrdjeno;
     }
 }

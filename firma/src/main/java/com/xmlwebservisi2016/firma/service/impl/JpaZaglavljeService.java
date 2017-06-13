@@ -40,6 +40,11 @@ public class JpaZaglavljeService implements ZaglavljeService {
     }
 
     @Override
+    public List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsFalse(String pib) {
+        return zaglavljeRepository.findByPibKupcaAndPotvrdjenoIsFalse(pib);
+    }
+
+    @Override
     public List<Zaglavlje> findByPibDobavljacaAndPibKupca(String pibDobavljaca, String pibKupca) {
 
         List<Zaglavlje> zaglavlja = zaglavljeRepository.findByPibDobavljacaAndPibKupca(pibDobavljaca, pibKupca);

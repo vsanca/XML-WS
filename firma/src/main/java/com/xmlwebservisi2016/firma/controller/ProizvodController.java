@@ -111,7 +111,7 @@ public class ProizvodController {
     }
 
     @RequestMapping(
-            value = "/kupiProizvod",
+            value = "/kupiProizvode",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -206,81 +206,6 @@ public class ProizvodController {
 
     }
 
-    @RequestMapping(
-            value = "/zavrsiKupovinu",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<NalogZaPrenos> zavrsiKupovinu(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
 
-        try {
-            Firma prodavac = firmaService.findByPib(fakturaZaglavlje.getPibDobavljaca());
-            Firma kupac = firmaService.findByPib(fakturaZaglavlje.getPibKupca());
-
-            if (prodavac != null && kupac != null) {
-                NalogZaPrenos nalogZaPrenos = new NalogZaPrenos();
-                nalogZaPrenos.setIdPoruke(UUID.randomUUID().toString());
-                nalogZaPrenos.setSvrhaPlacanja("kupovina");
-                NalogZaPrenos.PodaciOPrenosu podaciOPrenosu = new NalogZaPrenos.PodaciOPrenosu();
-
-                TOsobaPrenos duznik = new TOsobaPrenos();
-                nalogZaPrenos.setDuznikNalogodavac(kupac.getName());
-                duznik.setBrojRacuna(kupac.getBrojRacuna());
-                duznik.setPozivNaBroj(kupac.getPozivNaBroj());
-                duznik.setModel(kupac.getModel());
-
-                TOsobaPrenos primalac = new TOsobaPrenos();
-                nalogZaPrenos.setPrimalacPoverilac(prodavac.getName());
-                primalac.setBrojRacuna(prodavac.getBrojRacuna());
-                primalac.setPozivNaBroj(prodavac.getPozivNaBroj());
-                primalac.setModel(prodavac.getModel());
-
-                podaciOPrenosu.setDuznikPrenos(duznik);
-                podaciOPrenosu.setPoverilacPrenos(primalac);
-                podaciOPrenosu.setDatumValute(fakturaZaglavlje.getDatumValute());
-                podaciOPrenosu.setOznakaValute(fakturaZaglavlje.getOznakaValute());
-                podaciOPrenosu.setIznos(fakturaZaglavlje.getIznosZaUplatu());
-
-                nalogZaPrenos.setPodaciOPrenosu(podaciOPrenosu);
-
-                nalogZaPrenos.setDatumNaloga(fakturaZaglavlje.getDatumRacuna());
-
-
-
-                zaglavljeService.dodajIliIzmeniZaglavlje(Converter.fromFakturaZaglavljeToZaglavlje(fakturaZaglavlje));
-
-                // ovde se gadja web servis u banci
-
-
-                return new ResponseEntity<NalogZaPrenos>(nalogZaPrenos, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-    }
-
-    @RequestMapping(
-            value = "/odbijKupovinu",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity odbijKupovinu(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
-        try {
-            Zaglavlje zaglavlje = Converter.fromFakturaZaglavljeToZaglavlje(fakturaZaglavlje);
-            stavkaService.deleteByZaglavlje(zaglavlje);
-            zaglavljeService.deleteByIdPoruke(zaglavlje.getIdPoruke());
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
-        }
-
-    }
 
 }

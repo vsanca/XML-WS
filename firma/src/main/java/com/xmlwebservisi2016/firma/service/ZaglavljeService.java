@@ -15,6 +15,8 @@ public interface ZaglavljeService {
 
     List<Zaglavlje> findByPibDobavljacaAndZavrsenoIsFalse(String pib);
 
+    List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsFalse(String pib);
+
     List<Zaglavlje> findByPibDobavljacaAndPibKupca(String pibDobavljaca, String pibKupca);
 
     List<Zaglavlje> findByPibDobavljacaOrPibKupca(String pibDobavljaca, String pibKupca);
