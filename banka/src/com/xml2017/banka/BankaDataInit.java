@@ -30,8 +30,9 @@ public class BankaDataInit {
 		XMLDocumentManager xmlManager = client.newXMLDocumentManager();
 		
 		String swiftKod = "AAAABBNS";
+		String swiftKod2 = "CCCCDDNS";
 		
-		String docId = "/racun111-1111111111111-11.xml";
+		String docId = "/racun111-1111111111111-11";
 		String collId = "/racuni";
 		
 		DocumentMetadataHandle metadata = new DocumentMetadataHandle();
@@ -39,20 +40,39 @@ public class BankaDataInit {
 		
 		BankaRacunKlijenta racun = new BankaRacunKlijenta();
 		
-		racun.setBankaPort(BankaService.port);
+		racun.setBankaPort("8080");
 		racun.setBrojRacuna("111-1111111111111-11");
-		racun.setStanje(BigDecimal.ZERO);
+		racun.setStanje(BigDecimal.valueOf(350000));
 		racun.setSwiftKod(swiftKod);
+		
+		BankaRacunKlijenta racun2 = new BankaRacunKlijenta();
+		
+		racun2.setBankaPort("8080");
+		racun2.setBrojRacuna("111-1111111111111-22");
+		racun2.setStanje(BigDecimal.valueOf(50000));
+		racun2.setSwiftKod(swiftKod);
+		
+		BankaRacunKlijenta racun3 = new BankaRacunKlijenta();
+		
+		racun3.setBankaPort("8081");
+		racun3.setBrojRacuna("111-1111111111111-33");
+		racun3.setStanje(BigDecimal.valueOf(100000));
+		racun3.setSwiftKod(swiftKod2);
 		
 		JAXBContext context = JAXBContext.newInstance(BankaRacunKlijenta.class);
 		JAXBHandle<BankaRacunKlijenta> writeHandle = new JAXBHandle<BankaRacunKlijenta>(context);
+		
 		writeHandle.set(racun);
-		
-		System.out.println("Tacno pre write-a");
 		xmlManager.write(docId, metadata, writeHandle);
-		System.out.println("Pisanje racuna klijenta uspesno!");
 		
-		docId = "/obracunskiRacun" + BankaService.port;
+		writeHandle.set(racun2);
+		xmlManager.write("/racun" + racun2.getBrojRacuna(), metadata, writeHandle);
+		
+		writeHandle.set(racun3);
+		xmlManager.write("/racun" + racun3.getBrojRacuna(), metadata, writeHandle);
+		
+		
+		docId = "/obracunskiRacun8080";
 		collId = "/obracunski";
 		
 		metadata = new DocumentMetadataHandle();
@@ -60,17 +80,28 @@ public class BankaDataInit {
 		
 		BankaObracunskiRacun obracunski = new BankaObracunskiRacun();
 		
-		obracunski.setBankaPort(BankaService.port);
+		obracunski.setBankaPort("8080");
 		obracunski.setBrojObracunskog("000-0000000000000-00");
-		obracunski.setStanje(BigDecimal.valueOf(300000.00));
+		obracunski.setStanje(BigDecimal.valueOf(500000.00));
 		obracunski.setSwiftKod(swiftKod);
+		
+		BankaObracunskiRacun obracunski1 = new BankaObracunskiRacun();
+		
+		obracunski1.setBankaPort("8081");
+		obracunski1.setBrojObracunskog("000-0000000000000-11");
+		obracunski1.setStanje(BigDecimal.valueOf(300000.00));
+		obracunski1.setSwiftKod(swiftKod2);
 	
 		context = JAXBContext.newInstance(BankaObracunskiRacun.class);
 		JAXBHandle<BankaObracunskiRacun> writeHandle1 = new JAXBHandle<BankaObracunskiRacun>(context);
-		writeHandle1.set(obracunski);
 		
+		writeHandle1.set(obracunski);	
 		xmlManager.write(docId, metadata, writeHandle1);
-		System.out.println("Pisanje obracunskog uspesno!");
+		
+		writeHandle1.set(obracunski1);
+		xmlManager.write("/obracunskiRacun8081", metadata, writeHandle1);
+		
+		System.out.println("Pisanje obracunskih uspesno!");
 		
 		QueryManager queryManager = client.newQueryManager();
 		

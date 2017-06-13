@@ -16,6 +16,7 @@ import javax.xml.ws.Service;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import com.xml2017.centralna_banka.CentralnaBanka;
 import com.xml2017.schema.mt102.Mt102;
+import com.xml2017.schema.mt102.Mt102.PojedinacnaPlacanja;
 import com.xml2017.schema.mt103.Mt103;
 import com.xml2017.schema.mt103.Mt103.Banke;
 import com.xml2017.schema.mt900.Mt900;
@@ -77,13 +78,15 @@ public class HelloClient {
 			u.setDuznikNalogodavac("Duznik");
 			u.setDuznikZaduzenje(duznik1);
 			
-			u.setDatumNaloga(new XMLGregorianCalendarImpl());
-			u.setDatumValute(new XMLGregorianCalendarImpl());
+			//u.setDatumNaloga(new XMLGregorianCalendarImpl());
+			//u.setDatumValute(new XMLGregorianCalendarImpl());
 			
 			u.setSifraValute("RSD");
 			u.setSvrhaPlacanja("Svrha");
 			
 			request.setUplata(u);
+			
+			Mt900 mt9001 = RTGS.mt103ReceiveCB(request);
 
 
 			Mt102 mt102 = new Mt102();
@@ -93,11 +96,11 @@ public class HelloClient {
 			mt102.setIDPoruke("333");
 			mt102.setUkupanIznos((new BigDecimal(1234)));
 			mt102.setSifraValute("RSD");
-			mt102.setDatum(new XMLGregorianCalendarImpl());
-			mt102.setDatumValute(new XMLGregorianCalendarImpl());
+			//mt102.setDatum(new XMLGregorianCalendarImpl());
+			//mt102.setDatumValute(new XMLGregorianCalendarImpl());
 			
 			TPojedinacnoPlacanje placanje = new TPojedinacnoPlacanje();
-			placanje.setDatumNaloga(new XMLGregorianCalendarImpl());
+			//placanje.setDatumNaloga(new XMLGregorianCalendarImpl());
 			placanje.setDuznikNalogodavac("Duznik");
 			placanje.setIDNalogaZaPlacanje("1");
 			placanje.setIznos(new BigDecimal(1234));
@@ -111,15 +114,19 @@ public class HelloClient {
 			placanje.setSifraValute("RSD");
 			placanje.setSvrhaPlacanja("Svrha");
 			
-			ArrayList<TPojedinacnoPlacanje> placanja = new ArrayList<TPojedinacnoPlacanje>();
-			placanja.add(placanje);
+			//ArrayList<TPojedinacnoPlacanje> placanja = new ArrayList<TPojedinacnoPlacanje>();
+			//placanja.add(placanje);
 			
-			//mt102.getPojedinacnaPlacanja().getPojedinacnoPlacanje().add(placanje);
+			PojedinacnaPlacanja placanja = new PojedinacnaPlacanja();
+			//placanja.getPojedinacnoPlacanje().add(placanje);
+			
+			mt102.setPojedinacnaPlacanja(placanja);
 			
 			
-			//Mt900 mt900 = RTGS.mt102ReceiveCB(mt102);
+			Mt900 mt900 = RTGS.mt102ReceiveCB(mt102);
 			
-			System.out.println(mt102);		
+			System.out.println(mt102);
+			System.out.println("Izvrseno!");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
