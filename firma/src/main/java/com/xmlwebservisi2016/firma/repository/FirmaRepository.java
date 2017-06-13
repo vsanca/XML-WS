@@ -16,5 +16,7 @@ public interface FirmaRepository extends JpaRepository<Firma, Long> {
 
     List<Firma> findAll();
 
+    Firma findByBrojRacuna(String brojRacuna);
+
 
 }

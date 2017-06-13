@@ -5,5 +5,5 @@
 // Generated on: 2017.06.09 at 08:35:55 PM CEST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.ftn.uns.ac.rs/zahtev", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.xml2017.com/schema/zahtev", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package com.xmlwebservisi2016.firma.model.jaxb.zahtev;

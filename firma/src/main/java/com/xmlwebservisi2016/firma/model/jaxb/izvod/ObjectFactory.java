@@ -6,7 +6,7 @@
 //
 
 
-package com.xml2017.schema.izvod;
+package com.xmlwebservisi2016.firma.model.jaxb.izvod;
 
 import com.xmlwebservisi2016.firma.model.jaxb.izvod.Izvod;
 
