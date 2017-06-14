@@ -26,44 +26,52 @@ public class BankaServiceImpl implements BankaService {
     @Override
     public Izvod preuzimanjeIzvoda(ZahtevZaIzvod zahtev, Firma firma) {
 
-        URL wsdlLocation;
         try {
-            wsdlLocation = new URL("http://localhost:" + firma.getBankPort() + "/banka/services/Banka?wsdl");
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
+            URL wsdlLocation;
+            try {
+                wsdlLocation = new URL("http://localhost:" + firma.getBankPort() + "/banka/services/Banka?wsdl");
+            } catch (MalformedURLException e1) {
+                e1.printStackTrace();
+                return null;
+            }
+            QName serviceName = new QName("http://www.xml2017.com/banka", "BankaService");
+            QName portName = new QName("http://www.xml2017.com/banka", "Banka");
+
+            javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
+
+            Banka banka = service.getPort(portName, Banka.class);
+
+            Izvod izvod = banka.preuzimanjeIzvoda(zahtev);
+
+            return izvod;
+        } catch (Exception e) {
             return null;
         }
-        QName serviceName = new QName("http://www.xml2017.com/banka", "BankaService");
-        QName portName = new QName("http://www.xml2017.com/banka", "Banka");
-
-        javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
-
-        Banka banka = service.getPort(portName, Banka.class);
-
-        Izvod izvod = banka.preuzimanjeIzvoda(zahtev);
-
-        return izvod;
     }
 
     @Override
     public boolean slanjeNalogaZaPlacanje(NalogZaPrenos nalog, Firma firma) {
 
-        URL wsdlLocation;
         try {
-            wsdlLocation = new URL("http://localhost:" + firma.getBankPort() + "/banka/services/Banka?wsdl");
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
+            URL wsdlLocation;
+            try {
+                wsdlLocation = new URL("http://localhost:" + firma.getBankPort() + "/banka/services/Banka?wsdl");
+            } catch (MalformedURLException e1) {
+                e1.printStackTrace();
+                return false;
+            }
+            QName serviceName = new QName("http://www.xml2017.com/banka", "BankaService");
+            QName portName = new QName("http://www.xml2017.com/banka", "Banka");
+
+            javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
+
+            Banka banka = service.getPort(portName, Banka.class);
+
+            boolean rezultat = banka.slanjeNalogaZaPlacanje(nalog);
+
+            return rezultat;
+        } catch (Exception e) {
             return false;
         }
-        QName serviceName = new QName("http://www.xml2017.com/banka", "BankaService");
-        QName portName = new QName("http://www.xml2017.com/banka", "Banka");
-
-        javax.xml.ws.Service service = javax.xml.ws.Service.create(wsdlLocation, serviceName);
-
-        Banka banka = service.getPort(portName, Banka.class);
-
-        boolean rezultat = banka.slanjeNalogaZaPlacanje(nalog);
-
-        return rezultat;
     }
 }

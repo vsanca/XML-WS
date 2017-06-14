@@ -11,10 +11,12 @@ import java.math.BigDecimal;
 @Entity(name = "stavka")
 @Table(name = "stavka")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@IdClass(StavkaPK.class)
 public class Stavka {
 
     @Id
+    @GeneratedValue
+    @Column(name = "sid")
+    protected long id;
     @Column(name = "redni_broj")
     protected int redniBroj;
     @Column(name = "naziv_robe_ili_usluge")
@@ -39,7 +41,7 @@ public class Stavka {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pid", referencedColumnName = "pid")
     protected Proizvod proizvod;
-    @Id
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_poruke", referencedColumnName = "id_poruke")
     protected Zaglavlje zaglavlje;
@@ -60,6 +62,14 @@ public class Stavka {
         this.ukupanPorez = ukupanPorez;
         this.proizvod = proizvod;
         this.zaglavlje = zaglavlje;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getRedniBroj() {

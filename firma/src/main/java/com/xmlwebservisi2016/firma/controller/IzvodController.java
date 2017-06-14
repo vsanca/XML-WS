@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 /**
  * Created by Svetozar Stojkovic on 6/8/2017.
  */
+@RestController
 public class IzvodController  {
 
     @Autowired
@@ -41,6 +43,7 @@ public class IzvodController  {
         if (firma != null) {
 
             Izvod outputIzvod = new Izvod();
+            outputIzvod.setZaglavlje(new Izvod.Zaglavlje());
             outputIzvod.getZaglavlje().setUkupnoUKorist(BigDecimal.valueOf(0));
             outputIzvod.getZaglavlje().setUkupnoNaTeret(BigDecimal.valueOf(0));
             outputIzvod.getZaglavlje().setBrojPromenaNaTeret(0);

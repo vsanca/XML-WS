@@ -1,13 +1,15 @@
 package com.xmlwebservisi2016.firma.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xmlwebservisi2016.firma.dto.UserFirmaDTO;
-import com.xmlwebservisi2016.firma.model.database_entities.Firma;
+import com.xmlwebservisi2016.firma.dto.ZahtevDTO;
+import com.xmlwebservisi2016.firma.model.database_entities.*;
 import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.model.database_entities.Proizvod;
-import com.xmlwebservisi2016.firma.model.database_entities.User;
 import com.xmlwebservisi2016.firma.service.FirmaService;
 import com.xmlwebservisi2016.firma.service.ProizvodService;
+import com.xmlwebservisi2016.firma.service.StavkaService;
 import com.xmlwebservisi2016.firma.service.UserService;
+import com.xmlwebservisi2016.firma.util.Converter;
 import com.xmlwebservisi2016.firma.websockets.FirmaWebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by Hp on 6/5/2017.
@@ -30,6 +35,9 @@ public class UserController {
 
     @Autowired
     private ProizvodService proizvodService;
+
+    @Autowired
+    private StavkaService stavkaService;
 
     @RequestMapping(
             value = "/login",
@@ -51,6 +59,7 @@ public class UserController {
 //            proizvodService.dodajIliIzmeniProizvod(proizvod);
 //            new FirmaWebSocket().displayMessageToActiveUsers();
             //Firma firma = firmaService.findById(foundUser.getFirma().getId());
+            //stavkaService.findAll();
 
             if (firma != null) {
                 UserFirmaDTO ufDTO = new UserFirmaDTO(foundUser, firma);

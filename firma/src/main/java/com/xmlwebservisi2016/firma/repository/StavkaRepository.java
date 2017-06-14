@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Svetozar Stojkovic on 6/12/2017.
  */
-public interface StavkaRepository extends JpaRepository<Stavka, StavkaPK> {
+public interface StavkaRepository extends JpaRepository<Stavka, Long> {
 
     //Stavka findById(StavkaPK stavkaPK);
     Stavka findByZaglavljeAndRedniBroj(Zaglavlje zaglavlje, int redniBroj);
