@@ -14,14 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.websocket.Session;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -45,6 +45,9 @@ public class FaktureController {
 
     @Autowired
     private ProizvodService proizvodService;
+
+    @Autowired
+    private UserService userService;
 
 
 
@@ -283,6 +286,60 @@ public class FaktureController {
         FaktureDTO webSocketFaktureDTO = new FaktureDTO();
         webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
         webSocketFaktureDTO.setTip("ALL");
+
+        return webSocketFaktureDTO;
+    }
+
+    @RequestMapping(
+            value = "/faktureZaPotvrdu",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public FaktureDTO faktureZaPotvrdu(String userId) {
+        User foundUser = userService.findById(Long.parseLong(userId));
+
+        Firma firma = foundUser.getFirma();
+
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalseAndPotvrdjenoIsTrue(firma.getPib()); // TODO [SVS] fix this
+
+        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
+
+        for (Zaglavlje zaglavlje : zaglavljaUToku) {
+            List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
+            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
+        }
+
+        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
+        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
+        webSocketFaktureDTO.setTip("ZA_POTVRDU");
+
+        return webSocketFaktureDTO;
+    }
+
+    @RequestMapping(
+            value = "/potvrdjeneFakture",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public FaktureDTO potvrdjeneFakture(String userId) {
+        User foundUser = userService.findById(Long.parseLong(userId));
+
+        Firma firma = foundUser.getFirma();
+
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
+
+        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
+
+        for (Zaglavlje zaglavlje : zaglavljaUToku) {
+            List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
+            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
+        }
+
+        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
+        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
+        webSocketFaktureDTO.setTip("POTVRDJENE");
 
         return webSocketFaktureDTO;
     }

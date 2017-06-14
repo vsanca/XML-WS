@@ -13,7 +13,7 @@ public interface ZaglavljeService {
 
     List<Zaglavlje> findAll();
 
-    List<Zaglavlje> findByPibDobavljacaAndZavrsenoIsFalse(String pib);
+    List<Zaglavlje> findByPibDobavljacaAndZavrsenoIsFalseAndPotvrdjenoIsTrue(String pib);
 
     List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsFalse(String pib);
 
