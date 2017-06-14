@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Svetozar Stojkovic on 6/10/2017.
  */
 @Repository
-public interface ProizvodiRepository extends JpaRepository<Proizvod, ProizvodPK>{
+public interface ProizvodiRepository extends JpaRepository<Proizvod, Long>{
 
     Proizvod findByNazivAndFirma(String naziv, Firma firma);
 
