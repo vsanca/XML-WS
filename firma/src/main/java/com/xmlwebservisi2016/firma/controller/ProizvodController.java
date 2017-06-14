@@ -109,7 +109,20 @@ public class ProizvodController {
         }
 
     }
+    /* primer
+        {
+            "kupacID":2,
+            "proizvodi":
+            [
+                {"id":1,"tip":"USLUGA","naziv":"Donji ves","mera":"kg","cena":100.0,"rabat":10.0,"kolicina":20,"firma":{"id":1,"name":"Best firma1 ever","adresa":"Djure Danicica 45","brojRacuna":"111-1111111111111-11","pozivNaBroj":"11111111111111111111","model":97,"pib":"123","version":1,"bankPort":"8080"},"version":1},
+                {"id":2,"tip":"ROBA","naziv":"Lizalice","mera":"g","cena":150.0,"rabat":5.0,"kolicina":34,"firma":{"id":1,"name":"Best firma1 ever","adresa":"Djure Danicica 45","brojRacuna":"111-1111111111111-11","pozivNaBroj":"11111111111111111111","model":97,"pib":"123","version":1,"bankPort":"8080"},"version":1}
 
+            ],
+            "kolicine" : [2,3],
+            "oznakaValute":"RSD"
+        }
+
+     */
     @RequestMapping(
             value = "/kupiProizvode",
             method = RequestMethod.POST,
@@ -119,83 +132,88 @@ public class ProizvodController {
     public ResponseEntity kupiProizvod(@RequestBody Kupovina kupovina) throws DatatypeConfigurationException {
 
         try {
-            Firma prodavac = firmaService.findById(kupovina.getProizvodi().keySet().iterator().next().getFirma().getId());
+            Firma prodavac = firmaService.findById(kupovina.getProizvodi().get(0).getFirma().getId());
             Firma kupac = firmaService.findById(kupovina.getKupacID());
 
             if (prodavac != null && kupac != null) {
-                FakturaZaglavlje fakturaZaglavlje = new FakturaZaglavlje();
-                fakturaZaglavlje.setIdPoruke(UUID.randomUUID().toString());
-                fakturaZaglavlje.setNazivDobavljaca(prodavac.getName());
-                fakturaZaglavlje.setAdresaDobavljaca(prodavac.getAdresa());
-                fakturaZaglavlje.setPibDobavljaca(prodavac.getPib());
-                fakturaZaglavlje.setNazivKupca(kupac.getName());
-                fakturaZaglavlje.setAdresaKupca(kupac.getAdresa());
-                fakturaZaglavlje.setPibKupca(kupac.getPib());
-                fakturaZaglavlje.setBrojRacuna(new Random().nextInt(999999));
+                Zaglavlje zaglavlje = new Zaglavlje();
+                zaglavlje.setIdPoruke(UUID.randomUUID().toString());
+                zaglavlje.setNazivDobavljaca(prodavac.getName());
+                zaglavlje.setAdresaDobavljaca(prodavac.getAdresa());
+                zaglavlje.setPibDobavljaca(prodavac.getPib());
+                zaglavlje.setNazivKupca(kupac.getName());
+                zaglavlje.setAdresaKupca(kupac.getAdresa());
+                zaglavlje.setPibKupca(kupac.getPib());
+                zaglavlje.setBrojRacuna(new Random().nextInt(999999));
 
-                GregorianCalendar c = new GregorianCalendar();
-                c.setTime(new Date(System.currentTimeMillis()));
-                XMLGregorianCalendar xmlGC = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-                fakturaZaglavlje.setDatumRacuna(xmlGC);
+                zaglavlje.setDatumRacuna(new java.sql.Date(System.currentTimeMillis()));
 
-                BigDecimal roba = BigDecimal.valueOf(0);
-                BigDecimal usluge = BigDecimal.valueOf(0);
-                BigDecimal rabat = BigDecimal.valueOf(0);
+                List<Stavka> stavke = new ArrayList<>();
 
-                for (Proizvod p : kupovina.getProizvodi().keySet()) {
-                    if (p.ifRoba()) {
-                        roba.add(BigDecimal.valueOf(p.getCena()));
-                    } else if (p.ifUsluga()) {
-                        usluge.add(BigDecimal.valueOf(p.getCena()));
-                    }
-                    rabat.add(BigDecimal.valueOf(p.getRabat()).multiply(BigDecimal.valueOf(p.getCena())));
-                }
-
-                BigDecimal robaIUsluge = roba.add(usluge);
-                fakturaZaglavlje.setVrednostRobe(roba);
-                fakturaZaglavlje.setVrednostUsluga(usluge);
-                fakturaZaglavlje.setUkupnoRobaIUsluge(robaIUsluge);
-
-                fakturaZaglavlje.setUkupanRabat(rabat);
-
-                BigDecimal porez = roba.add(usluge).multiply(BigDecimal.valueOf(0.2));
-                fakturaZaglavlje.setUkupanPorez(porez);
-                fakturaZaglavlje.setOznakaValute(kupovina.getOznakaValute());
-                BigDecimal ukupnaUplata = robaIUsluge.subtract(rabat).add(porez);
-                fakturaZaglavlje.setIznosZaUplatu(ukupnaUplata);
-                fakturaZaglavlje.setUplataNaRacun(prodavac.getBrojRacuna());
-                fakturaZaglavlje.setDatumValute(xmlGC);
+                double roba = 0;
+                double usluge = 0;
+                double rabat = 0;
                 int i = 0;
-                for (Proizvod p : kupovina.getProizvodi().keySet()) {
-                    TFakturaStavka fakturaStavka = new TFakturaStavka();
-                    fakturaStavka.setRedniBroj(++i);
-                    fakturaStavka.setNazivRobeIliUsluge(p.getNaziv());
-                    fakturaStavka.setKolicina(BigDecimal.valueOf(kupovina.getProizvodi().get(p)));
-                    fakturaStavka.setJedinicaMere(p.getMera());
-                    fakturaStavka.setJedinicnaCena(BigDecimal.valueOf(p.getCena()));
-                    fakturaStavka.setVrednost(BigDecimal.valueOf(p.getCena()).multiply(BigDecimal.valueOf(kupovina.getProizvodi().get(p))));
-                    fakturaStavka.setProcenatRabata(BigDecimal.valueOf(p.getRabat()));
-                    BigDecimal iznosRabata = BigDecimal.valueOf(p.getRabat()).multiply(BigDecimal.valueOf(p.getCena()));
-                    fakturaStavka.setIznosRabata(iznosRabata);
-                    fakturaStavka.setUmanjenoZaRabat(BigDecimal.valueOf(p.getCena()).subtract(iznosRabata));
-                    BigDecimal ukupanPorez = BigDecimal.valueOf(p.getCena()).multiply(BigDecimal.valueOf(0.2));
-                    fakturaStavka.setUkupanPorez(ukupanPorez);
+                for (Proizvod p : kupovina.getProizvodi()) {
 
-                    fakturaZaglavlje.getFakturaStavka().add(fakturaStavka);
+                    if (p.ifRoba()) {
+                        roba += p.getCena() * kupovina.getKolicine().get(i);
+                    } else if (p.ifUsluga()) {
+                        usluge += p.getCena() * kupovina.getKolicine().get(i);
+                    }
+
+                    Stavka stavka = new Stavka();
+                    stavka.setRedniBroj(++i);
+                    stavka.setNazivRobeIliUsluge(p.getNaziv());
+
+                    long kolicina = kupovina.getKolicine().get(i-1);
+                    stavka.setKolicina(BigDecimal.valueOf(kolicina));
+                    stavka.setJedinicaMere(p.getMera());
+                    stavka.setJedinicnaCena(BigDecimal.valueOf(p.getCena()));
+
+                    double vrednost = p.getCena() * kolicina;
+                    stavka.setVrednost(BigDecimal.valueOf(vrednost));
+                    stavka.setProcenatRabata(BigDecimal.valueOf(p.getRabat()));
+
+                    double iznosRabata = (p.getRabat()/100) * vrednost;
+                    rabat += iznosRabata;
+                    stavka.setIznosRabata(BigDecimal.valueOf(iznosRabata));
+
+                    double umanjenoZaRabat = vrednost - iznosRabata;
+                    stavka.setUmanjenoZaRabat(BigDecimal.valueOf(umanjenoZaRabat));
+
+                    double ukupanPorez = umanjenoZaRabat * 0.2;
+                    stavka.setUkupanPorez(BigDecimal.valueOf(ukupanPorez));
+                    stavka.setZaglavlje(zaglavlje);
+                    stavka.setProizvod(p);
+                    stavke.add(stavka);
+
                 }
 
-                Zaglavlje zaglavlje = Converter.fromFakturaZaglavljeToZaglavlje(fakturaZaglavlje);
-                zaglavlje.setPotvrdjeno(false);
-                zaglavlje.setZavrseno(false);
+                double robaIUsluge = roba + usluge;
+                zaglavlje.setVrednostRobe(BigDecimal.valueOf(roba));
+                zaglavlje.setVrednostUsluga(BigDecimal.valueOf(usluge));
+                zaglavlje.setUkupnoRobaIUsluge(BigDecimal.valueOf(robaIUsluge));
+                zaglavlje.setUkupanRabat(BigDecimal.valueOf(rabat));
+
+                double porez = (robaIUsluge - rabat) * 0.2;
+
+                zaglavlje.setUkupanPorez(BigDecimal.valueOf(porez));
+                zaglavlje.setOznakaValute(kupovina.getOznakaValute());
+
+                double ukupnaUplata = robaIUsluge - rabat + porez;
+                zaglavlje.setIznosZaUplatu(BigDecimal.valueOf(ukupnaUplata));
+
+                zaglavlje.setUplataNaRacun(prodavac.getBrojRacuna());
+                zaglavlje.setDatumValute(new java.sql.Date(System.currentTimeMillis()));
 
                 Zaglavlje zaglavljeRet = zaglavljeService.dodajIliIzmeniZaglavlje(zaglavlje);
-
                 if (zaglavljeRet != null) {
-                    List<Stavka> stavke = Converter.fromFakturaZaglavljeToStavka(fakturaZaglavlje);
                     for (Stavka stavka : stavke) {
                         stavkaService.dodajIliIzmeniStavku(stavka);
                     }
                 }
+                System.out.println(Converter.getJSONString(zaglavljeRet));
                 new FirmaWebSocket().displayMessageToActiveUsers();
                 return new ResponseEntity(HttpStatus.OK);
 
@@ -208,7 +226,5 @@ public class ProizvodController {
         }
 
     }
-
-
 
 }

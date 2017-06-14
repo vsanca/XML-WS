@@ -2,6 +2,7 @@ package com.xmlwebservisi2016.firma.dto;
 
 import com.xmlwebservisi2016.firma.model.database_entities.Proizvod;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,16 +11,18 @@ import java.util.Map;
 public class Kupovina {
 
     private long kupacID;
-    private Map<Proizvod, Long> proizvodi;
+    private List<Proizvod> proizvodi;
+    private List<Long> kolicine;
     private String oznakaValute;
 
 
     public Kupovina() {
     }
 
-    public Kupovina(long kupacID, Map<Proizvod, Long> proizvodi, String oznakaValute) {
+    public Kupovina(long kupacID, List<Proizvod> proizvodi, List<Long> kolicine, String oznakaValute) {
         this.kupacID = kupacID;
         this.proizvodi = proizvodi;
+        this.kolicine = kolicine;
         this.oznakaValute = oznakaValute;
     }
 
@@ -31,11 +34,11 @@ public class Kupovina {
         this.kupacID = kupacID;
     }
 
-    public Map<Proizvod, Long> getProizvodi() {
+    public List<Proizvod> getProizvodi() {
         return proizvodi;
     }
 
-    public void setProizvodi(Map<Proizvod, Long> proizvodi) {
+    public void setProizvodi(List<Proizvod> proizvodi) {
         this.proizvodi = proizvodi;
     }
 
@@ -45,5 +48,13 @@ public class Kupovina {
 
     public void setOznakaValute(String oznakaValute) {
         this.oznakaValute = oznakaValute;
+    }
+
+    public List<Long> getKolicine() {
+        return kolicine;
+    }
+
+    public void setKolicine(List<Long> kolicine) {
+        this.kolicine = kolicine;
     }
 }

@@ -1,6 +1,8 @@
 package com.xmlwebservisi2016.firma.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xmlwebservisi2016.firma.dto.Kupovina;
 import com.xmlwebservisi2016.firma.dto.UserFirmaDTO;
 import com.xmlwebservisi2016.firma.dto.ZahtevDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.*;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Hp on 6/5/2017.
@@ -68,6 +72,17 @@ public class UserController {
 //            stavka.setZaglavlje(zaglavlje);
 //            stavkaService.dodajIliIzmeniStavku(stavka);
 
+//            Kupovina kupovina = new Kupovina();
+//            kupovina.setKupacID(1);
+//            kupovina.setOznakaValute("RSD");
+//            List<Proizvod> proizvodLongMap = new HashMap<>();
+//            proizvodLongMap.put(proizvodService.findByNazivAndFirma("Donji ves", firma), new Long(2));
+//            proizvodLongMap.put(proizvodService.findByNazivAndFirma("Lizalice", firma), new Long(3));
+//            kupovina.setProizvodi(proizvodLongMap);
+//
+//            System.out.println(Converter.getJSONString(proizvodService.findByNazivAndFirma("Donji ves", firma)));
+//            System.out.println(Converter.getJSONString(proizvodService.findByNazivAndFirma("Lizalice", firma)));
+//            System.out.println(Converter.getJSONString(kupovina));
 
             if (firma != null) {
                 UserFirmaDTO ufDTO = new UserFirmaDTO(foundUser, firma);

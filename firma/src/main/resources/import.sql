@@ -2,7 +2,7 @@ INSERT INTO firma (fid, banka_port, fname, fadresa, fbroj_racuna, fpoziv_na_broj
 INSERT INTO firma (fid, banka_port, fname, fadresa, fbroj_racuna, fpoziv_na_broj, fmodel, fpib, version) VALUES (2, '8081', 'Best firma2 ever', 'Vojvodjanskih brigada 23', '111-1111111111111-33', '11111111111111111111', 97, '234', 1);
 
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (1,'USLUGA', 'Donji ves', 'kg', 100, 10, 20, 1, 1);
-INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (2,'ROBA', 'Lizalice', 'g', 150, 5, 34, 2, 1);
+INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (2,'ROBA', 'Lizalice', 'g', 150, 5, 34, 1, 1);
 
 INSERT INTO appuser (uuname, upword, fid, version) VALUES ('Dick', 'Steele', 1, 1);
 INSERT INTO appuser (uuname, upword, fid, version) VALUES ('Random', 'Random', 2, 1);

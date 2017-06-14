@@ -1,5 +1,7 @@
 package com.xmlwebservisi2016.firma.dto;
 
+import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
+import com.xmlwebservisi2016.firma.model.database_entities.Zaglavlje;
 import com.xmlwebservisi2016.firma.model.jaxb.faktura_zaglavlje.FakturaZaglavlje;
 
 import java.util.List;
@@ -10,14 +12,14 @@ import java.util.List;
 public class WebSocketFaktureDTO {
 
     private String tip;
-    private List<FakturaZaglavlje> fakturaZaglavljeList;
+    private List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS;
 
     public WebSocketFaktureDTO() {
     }
 
-    public WebSocketFaktureDTO(String tip, List<FakturaZaglavlje> fakturaZaglavljeList) {
+    public WebSocketFaktureDTO(String tip, List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS) {
         this.tip = tip;
-        this.fakturaZaglavljeList = fakturaZaglavljeList;
+        this.zaglavljeStavkeDTOS = zaglavljeStavkeDTOS;
     }
 
     public String getTip() {
@@ -28,11 +30,11 @@ public class WebSocketFaktureDTO {
         this.tip = tip;
     }
 
-    public List<FakturaZaglavlje> getFakturaZaglavljeList() {
-        return fakturaZaglavljeList;
+    public List<ZaglavljeStavkeDTO> getZaglavljeStavkeDTOS() {
+        return zaglavljeStavkeDTOS;
     }
 
-    public void setFakturaZaglavljeList(List<FakturaZaglavlje> fakturaZaglavljeList) {
-        this.fakturaZaglavljeList = fakturaZaglavljeList;
+    public void setZaglavljeStavkeDTOS(List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS) {
+        this.zaglavljeStavkeDTOS = zaglavljeStavkeDTOS;
     }
 }

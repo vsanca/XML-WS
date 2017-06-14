@@ -50,7 +50,7 @@ public class FaktureController {
 
     /**
      *  Ovu metodu poziva kupac firma nakon sto je dobio signal da je kupovina potvrdjena
-     * @param fakturaZaglavlje
+     * @param zaglavlje
      * @return
      */
     @RequestMapping(
@@ -59,13 +59,13 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<NalogZaPrenos> dobijNalogZaPrenos(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+    public ResponseEntity<NalogZaPrenos> dobijNalogZaPrenos(@RequestBody Zaglavlje zaglavlje) {
 
         try {
-            Firma prodavac = firmaService.findByPib(fakturaZaglavlje.getPibDobavljaca());
-            Firma kupac = firmaService.findByPib(fakturaZaglavlje.getPibKupca());
+            Firma prodavac = firmaService.findByPib(zaglavlje.getPibDobavljaca());
+            Firma kupac = firmaService.findByPib(zaglavlje.getPibKupca());
 
-            if (prodavac != null && kupac != null) {
+            if (prodavac != null && kupac != null && zaglavlje.isPotvrdjeno()) {
                 NalogZaPrenos nalogZaPrenos = new NalogZaPrenos();
                 nalogZaPrenos.setIdPoruke(UUID.randomUUID().toString());
                 nalogZaPrenos.setSvrhaPlacanja("kupovina");
@@ -85,18 +85,18 @@ public class FaktureController {
 
                 podaciOPrenosu.setDuznikPrenos(duznik);
                 podaciOPrenosu.setPoverilacPrenos(primalac);
-                podaciOPrenosu.setDatumValute(fakturaZaglavlje.getDatumValute());
-                podaciOPrenosu.setOznakaValute(fakturaZaglavlje.getOznakaValute());
-                podaciOPrenosu.setIznos(fakturaZaglavlje.getIznosZaUplatu());
+                podaciOPrenosu.setDatumValute(Converter.fromDateToXMLGregorianCalendar(zaglavlje.getDatumValute().getTime()));
+                podaciOPrenosu.setOznakaValute(zaglavlje.getOznakaValute());
+                podaciOPrenosu.setIznos(zaglavlje.getIznosZaUplatu());
 
                 nalogZaPrenos.setPodaciOPrenosu(podaciOPrenosu);
 
-                nalogZaPrenos.setDatumNaloga(fakturaZaglavlje.getDatumRacuna());
+                nalogZaPrenos.setDatumNaloga(Converter.fromDateToXMLGregorianCalendar(zaglavlje.getDatumRacuna().getTime()));
 
-                Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke(fakturaZaglavlje.getIdPoruke());
-                zaglavlje.setZavrseno(true);
+                Zaglavlje zaglavljeRet = zaglavljeService.findByIdPoruke(zaglavlje.getIdPoruke());
+                zaglavljeRet.setZavrseno(true);
 
-                zaglavljeService.dodajIliIzmeniZaglavlje(zaglavlje);
+                zaglavljeService.dodajIliIzmeniZaglavlje(zaglavljeRet);
 
                 new FirmaWebSocket().displayMessageToActiveUsers();
 
@@ -136,7 +136,7 @@ public class FaktureController {
 
     /**
      * Ako je poslat nalog za prenos ispravno stanje proizvoda se menja
-     * @param fakturaZaglavlje
+     * @param zaglavlje
      * @return
      */
     @RequestMapping(
@@ -145,32 +145,34 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Boolean> novoStanjeProizvoda(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+    public ResponseEntity<Boolean> novoStanjeProizvoda(@RequestBody Zaglavlje zaglavlje) {
         try {
-            for (TFakturaStavka fakturaStavka : fakturaZaglavlje.getFakturaStavka()) {
-                Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke(fakturaZaglavlje.getIdPoruke());
-                if (zaglavlje != null) {
-                    Stavka stavka = stavkaService.findByZaglavljeAndRedniBroj(zaglavlje, fakturaStavka.getRedniBroj());
-                    if (stavka != null) {
-                        BigDecimal kolicina = stavka.getKolicina();
-                        Proizvod proizvod = stavka.getProizvod();
-                        proizvod.setKolicina(proizvod.getKolicina() - kolicina.longValue());
-                        Firma kupac = firmaService.findByPib(fakturaZaglavlje.getPibKupca());
-                        if (kupac != null) {
-                            if (proizvodService.dodajIliIzmeniProizvod(proizvod) != null) {
-                                Proizvod kupacProizvod = proizvodService.findByNazivAndFirma(proizvod.getNaziv(), kupac);
-                                if (kupacProizvod != null) {
-                                    kupacProizvod.setKolicina(kupacProizvod.getKolicina() + kolicina.longValue());
-                                    proizvodService.dodajIliIzmeniProizvod(kupacProizvod);
-                                } else {
-                                    proizvod.setKolicina(kolicina.longValue());
-                                    proizvod.setFirma(kupac);
-                                    proizvodService.dodajIliIzmeniProizvod(proizvod);
-                                }
-                            }
+            List<Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
+            for (Stavka stavka : stavke) {
+                BigDecimal kolicina = stavka.getKolicina();
+                Proizvod proizvod = stavka.getProizvod();
+                proizvod.setKolicina(proizvod.getKolicina() - kolicina.longValue());
+                Firma kupac = firmaService.findByPib(zaglavlje.getPibKupca());
+                if (kupac != null) {
+                    if (proizvodService.dodajIliIzmeniProizvod(proizvod) != null) {
+                        Proizvod kupacProizvod = proizvodService.findByNazivAndFirma(proizvod.getNaziv(), kupac);
+                        if (kupacProizvod != null) {
+                            kupacProizvod.setKolicina(kupacProizvod.getKolicina() + kolicina.longValue());
+                            proizvodService.dodajIliIzmeniProizvod(kupacProizvod);
+                        } else {
+                            Proizvod proizvod1 = new Proizvod();
+                            proizvod1.setVersion(1);
+                            proizvod1.setNaziv(proizvod.getNaziv());
+                            proizvod1.setCena(proizvod.getCena());
+                            proizvod1.setMera(proizvod.getMera());
+                            proizvod1.setRabat(proizvod.getRabat());
+                            proizvod1.setTip(proizvod.getTip());
+                            proizvod1.setKolicina(kolicina.longValue());
+                            proizvod1.setFirma(kupac);
+                            proizvodService.dodajIliIzmeniProizvod(proizvod1);
                         }
-
-
+                    } else {
+                        System.out.println("unable to change proizvod");
                     }
                 }
 
@@ -183,7 +185,7 @@ public class FaktureController {
 
     /**
      *  Ovu metodu prodavac poziva kada zeli da odobri kupovinu izabranih proizvoda
-     * @param fakturaZaglavlje
+     * @param zaglavlje
      * @return
      */
     @RequestMapping(
@@ -192,26 +194,31 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<FakturaZaglavlje> potvrdiKupovinu(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+    public ResponseEntity<Zaglavlje> potvrdiKupovinu(@RequestBody Zaglavlje zaglavlje) {
 
         try {
-            Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke(fakturaZaglavlje.getIdPoruke());
-            zaglavlje.setPotvrdjeno(true);
+            Zaglavlje zaglavljeRet = zaglavljeService.findByIdPoruke(zaglavlje.getIdPoruke());
+            if (zaglavljeRet != null) {
+                zaglavljeRet.setPotvrdjeno(true);
 
-            zaglavljeService.dodajIliIzmeniZaglavlje(zaglavlje);
+                zaglavljeService.dodajIliIzmeniZaglavlje(zaglavljeRet);
 
-            new FirmaWebSocket().displayMessageToActiveUsers();
+                new FirmaWebSocket().displayMessageToActiveUsers();
 
-            return new ResponseEntity<FakturaZaglavlje>(fakturaZaglavlje, HttpStatus.OK);
+                return new ResponseEntity<Zaglavlje>(zaglavljeRet, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
         } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
     }
 
     /**
      * Odbijanje kupovine od strane kupca ili prodavca
-     * @param fakturaZaglavlje
+     * @param zaglavlje
      * @return
      */
     @RequestMapping(
@@ -220,9 +227,9 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity odbijKupovinu(@RequestBody FakturaZaglavlje fakturaZaglavlje) {
+    public ResponseEntity odbijKupovinu(@RequestBody Zaglavlje zaglavlje) {
         try {
-            Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke(fakturaZaglavlje.getIdPoruke());
+            //Zaglavlje zaglavljeRet = zaglavljeService.findByIdPoruke(zaglavlje.getIdPoruke());
             stavkaService.deleteByZaglavlje(zaglavlje);
             zaglavljeService.deleteByIdPoruke(zaglavlje.getIdPoruke());
 

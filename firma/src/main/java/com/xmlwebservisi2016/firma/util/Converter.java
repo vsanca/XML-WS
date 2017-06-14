@@ -95,6 +95,10 @@ public class Converter {
             stavka.setUmanjenoZaRabat(fakturaStavka.getUmanjenoZaRabat());
             stavka.setUkupanPorez(fakturaStavka.getUkupanPorez());
 
+            Zaglavlje zaglavlje = Converter.fromFakturaZaglavljeToZaglavlje(fakturaZaglavlje);
+            stavka.setZaglavlje(zaglavlje);
+
+
             stavke.add(stavka);
         }
         return stavke;

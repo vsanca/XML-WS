@@ -1,6 +1,7 @@
 package com.xmlwebservisi2016.firma.websockets;
 
 import com.xmlwebservisi2016.firma.dto.WebSocketFaktureDTO;
+import com.xmlwebservisi2016.firma.dto.ZaglavljeStavkeDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
 import com.xmlwebservisi2016.firma.model.database_entities.User;
@@ -101,21 +102,17 @@ public class FirmaWebSocket {
 
         Firma firma = foundUser.getFirma();
 
-        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalse(firma.getPib());
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalse(firma.getPib()); // TODO [SVS] fix this
 
-        List<FakturaZaglavlje> fakture = new ArrayList<>();
+        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
 
         for (Zaglavlje zaglavlje : zaglavljaUToku) {
-            FakturaZaglavlje fakturaZaglavlje = Converter.fromZaglavljeToFakturaZaglavlje(zaglavlje);
             List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
-            for (Stavka stavka : stavke) {
-                fakturaZaglavlje.getFakturaStavka().add(Converter.fromStavkaToTFakturaStavka(stavka));
-            }
-            fakture.add(fakturaZaglavlje);
+            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
         }
 
         WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
-        webSocketFaktureDTO.setFakturaZaglavljeList(fakture);
+        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
         webSocketFaktureDTO.setTip("ZA_POTVRDU");
 
         Session session = sessions.get(userId);
@@ -135,19 +132,15 @@ public class FirmaWebSocket {
 
         List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
 
-        List<FakturaZaglavlje> fakture = new ArrayList<>();
+        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
 
         for (Zaglavlje zaglavlje : zaglavljaUToku) {
-            FakturaZaglavlje fakturaZaglavlje = Converter.fromZaglavljeToFakturaZaglavlje(zaglavlje);
             List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
-            for (Stavka stavka : stavke) {
-                fakturaZaglavlje.getFakturaStavka().add(Converter.fromStavkaToTFakturaStavka(stavka));
-            }
-            fakture.add(fakturaZaglavlje);
+            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
         }
 
         WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
-        webSocketFaktureDTO.setFakturaZaglavljeList(fakture);
+        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
         webSocketFaktureDTO.setTip("POTVRDJENE");
 
         Session session = sessions.get(userId);
