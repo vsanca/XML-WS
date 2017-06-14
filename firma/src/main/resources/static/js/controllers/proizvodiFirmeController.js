@@ -2,7 +2,7 @@
  * Created by Marko on 6/13/2017.
  */
 angular.module('firmaApp.ProizvodiFirmeController',[])
-    .controller('ProizvodiFirmeController', function ($scope, $localStorage, $location, $rootScope, $mdToast, FirmaFactory, ProizvodFactory) {
+    .controller('ProizvodiFirmeController', function ($scope, $localStorage, $location, $rootScope, $mdToast, FirmaFactory, ProizvodFactory, $mdDialog) {
 
         if($localStorage.tip != "Firma")
             $location.path("/");
@@ -10,61 +10,70 @@ angular.module('firmaApp.ProizvodiFirmeController',[])
         $scope.firme = [];
         function getAllFirme(){
             FirmaFactory.getAllFirme().success(function (data) {
-                $scope.firme = data;
+                for(var i = 0; i < data.length; i++){
+                    if(data[i].id != $localStorage.logged.firma.id)
+                        $scope.firme.push(data[i]);
+                }
             });
         }
         getAllFirme();
         $scope.firma = null;
 
-        // $scope.pacijenti = [];
-        // function getPacijenti(){
-        //     PacijentService.getPacijenti().success(function (data) {
-        //         $scope.pacijenti = data;
-        //     });
-        // }
-        // getPacijenti();
-        // $scope.pacijent = null;
-        //
-        // $scope.search = function (user) {
-        //     var searchText = $scope.searchText.toLowerCase();
-        //     fullname = user.osoba.oime.toLowerCase() + ' ' + user.osoba.oprezime.toLowerCase();
-        //     fullnameInverse = user.osoba.oprezime.toLowerCase() + ' ' + user.osoba.oime.toLowerCase();
-        //
-        //     if (fullname.indexOf(searchText) != -1) {
-        //         return true;
-        //     }
-        //     if (fullnameInverse.indexOf(searchText) != -1) {
-        //         return true;
-        //     }
-        //     if (user.osoba.ojmbg.indexOf(searchText) != -1) {
-        //         return true;
-        //     }
-        //     return false;
-        // };
-        //
-        // $scope.printNalaz = function(id) {
-        //     NalazService.printNalaz(id).success(function (data) {
-        //         $mdToast.show(
-        //             $mdToast.simple()
-        //                 .textContent('Успешно сте креирали извештај!')
-        //                 .hideDelay(3000)
-        //                 .position('top center')
-        //                 .theme('success-toast')
-        //         );
-        //
-        //         var pdfAsDataUri = "data:application/pdf;base64,"+data;
-        //         window.open(pdfAsDataUri);
-        //     });
-        // }
-        //
+
+
         $scope.proizvodiByFirma = [];
         $scope.getProizvodiByFirma = function(firma){
             if(firma != null) {
                 ProizvodFactory.getZaFirmu(firma.id).success(function (data) {
-                    $scope.proizvodiByFirma = data;
+                    for(var i = 0; i < data.length; i++){
+                        var temp = {"proizvod": null, "kolicina": 0, "kupujem": "Ne"};
+                        temp.proizvod = data[i];
+                        $scope.proizvodiByFirma.push(temp);
+                    }
                 });
             }else{
                 $scope.proizvodiByFirma = [];
             }
+        }
+
+
+        $scope.openCartDialog = function(ev, proizvodi) {
+            $mdDialog.show({
+                controller: cartController,
+                templateUrl: 'html/korpa.html',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose:true,
+                locals:{proizvodi: proizvodi}
+            })
+                .then(function(answer) {
+                    // if(answer.update == false)
+                    //     $scope.pacijentAlergije.push(answer.data);
+                });
+        }
+
+        function cartController($scope, $mdDialog, proizvodi) {
+
+            $scope.proizvodiZaKupovinu = [];
+            function getZaKupovinu(){
+                for(var i = 0; i < proizvodi.length; i++){
+                    if(proizvodi[i].kupujem == "Da")
+                        $scope.proizvodiZaKupovinu.push(proizvodi[i]);
+                }
+            }
+            getZaKupovinu();
+
+            $scope.ukupno = 0;
+            $scope.izracunajUkupno = function () {
+                $scope.ukupno = 0;
+                for(var i = 0; i < $scope.proizvodiZaKupovinu.length; i++){
+                    $scope.ukupno += $scope.proizvodiZaKupovinu[i].kolicina * $scope.proizvodiZaKupovinu[i].proizvod.cena;
+                }
+            }
+            $scope.izracunajUkupno();
+            
+            $scope.cancel = function() {
+                $mdDialog.cancel();
+            };
         }
     });
