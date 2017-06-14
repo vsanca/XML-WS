@@ -8,7 +8,11 @@ app.config(['$routeProvider','$httpProvider', function ($routeProvider, $httpPro
     $routeProvider
         .when('/', {
             templateUrl: 'html/welcome.html'
-        }).when('/proizvodiFirme', {
+        })
+        .when('/proizvodiFirme', {
             templateUrl: 'html/proizvodiFirme.html'
+        })
+        .when('/faktureFirme', {
+            templateUrl: 'html/faktureFirme.html'
         });
 }]);

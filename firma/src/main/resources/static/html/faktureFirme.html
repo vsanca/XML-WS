@@ -1,0 +1,24 @@
+<div>
+    <div ng-controller="FaktureFirmeController">
+        <table style="border: 1px solid white !important; width:100%;" >
+        <tr>
+        <th>Šifra</th>
+        <th>Naziv</th>
+        <th>Tip</th>
+        <th>Mera</th>
+        <th>Cena</th>
+        <th>Rabat</th>
+        <th>Količina</th>
+        </tr>
+        <tr ng-repeat="p in proizvodiByFirma">
+        <td>{{p.id}}</td>
+        <td>{{p.naziv}}</td>
+        <td>{{p.tip}}</td>
+        <td>{{p.mera}}</td>
+        <td>{{p.cena}}</td>
+        <td>{{p.rabat}}</td>
+        <td>{{p.kolicina}}</td>
+        </tr>
+        </table>
+    </div>
+</div>

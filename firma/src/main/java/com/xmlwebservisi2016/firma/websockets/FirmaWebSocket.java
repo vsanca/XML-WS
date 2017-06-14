@@ -94,6 +94,7 @@ public class FirmaWebSocket {
         System.out.println("Session " +session.getId()+" has ended");
     }
 
+
     private void faktureZaPotvrdu(String userId) {
         User foundUser = userService.findById(Long.parseLong(userId));
 

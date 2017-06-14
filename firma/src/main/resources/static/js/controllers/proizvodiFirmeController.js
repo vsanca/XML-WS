@@ -44,15 +44,15 @@ angular.module('firmaApp.ProizvodiFirmeController',[])
                 parent: angular.element(document.body),
                 targetEvent: ev,
                 clickOutsideToClose:true,
-                locals:{proizvodi: proizvodi}
+                locals:{proizvodi: proizvodi, firma: $localStorage.logged.firma}
             })
-                .then(function(answer) {
+                .then(function() {
                     // if(answer.update == false)
                     //     $scope.pacijentAlergije.push(answer.data);
                 });
         }
 
-        function cartController($scope, $mdDialog, proizvodi) {
+        function cartController($scope, $mdDialog, proizvodi, firma) {
 
             $scope.proizvodiZaKupovinu = [];
             function getZaKupovinu(){
@@ -71,7 +71,33 @@ angular.module('firmaApp.ProizvodiFirmeController',[])
                 }
             }
             $scope.izracunajUkupno();
-            
+
+            $scope.kupovina = {
+                "kupacID": null,
+                "proizvodi": [],
+                "kolicine": [],
+                "oznakaValute": "RSD"
+            }
+            $scope.kupi = function () {
+                $scope.kupovina.kupacID = firma.id;
+                for(var i = 0; i < $scope.proizvodiZaKupovinu.length; i++){
+                    $scope.kupovina.proizvodi.push($scope.proizvodiZaKupovinu[i].proizvod);
+                    $scope.kupovina.kolicine.push($scope.proizvodiZaKupovinu[i].kolicina);
+                }
+
+                ProizvodFactory.kupiProizvode($scope.kupovina).success(function () {
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Uspešno ste poslali fakturu!')
+                            .hideDelay(3000)
+                            .position('top center')
+                            .theme('success-toast')
+                    );
+
+                    $mdDialog.hide();
+                });
+            };
+
             $scope.cancel = function() {
                 $mdDialog.cancel();
             };

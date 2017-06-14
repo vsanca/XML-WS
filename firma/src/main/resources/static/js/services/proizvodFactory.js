@@ -10,6 +10,10 @@ angular.module('firmaApp.ProizvodFactory', [])
             return $http.post('/getZaFirmu', parseInt(fid));
         };
 
+        factory.kupiProizvode = function (kupovina) {
+            return $http.post('/kupiProizvode', kupovina);
+        };
+
         return factory;
 
     });
