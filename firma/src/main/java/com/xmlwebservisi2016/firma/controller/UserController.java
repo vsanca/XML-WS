@@ -5,10 +5,7 @@ import com.xmlwebservisi2016.firma.dto.UserFirmaDTO;
 import com.xmlwebservisi2016.firma.dto.ZahtevDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.*;
 import com.xmlwebservisi2016.firma.model.LoginAttempt;
-import com.xmlwebservisi2016.firma.service.FirmaService;
-import com.xmlwebservisi2016.firma.service.ProizvodService;
-import com.xmlwebservisi2016.firma.service.StavkaService;
-import com.xmlwebservisi2016.firma.service.UserService;
+import com.xmlwebservisi2016.firma.service.*;
 import com.xmlwebservisi2016.firma.util.Converter;
 import com.xmlwebservisi2016.firma.websockets.FirmaWebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,9 @@ public class UserController {
     @Autowired
     private StavkaService stavkaService;
 
+    @Autowired
+    private ZaglavljeService zaglavljeService;
+
     @RequestMapping(
             value = "/login",
             method = RequestMethod.POST,
@@ -60,6 +60,14 @@ public class UserController {
 //            new FirmaWebSocket().displayMessageToActiveUsers();
             //Firma firma = firmaService.findById(foundUser.getFirma().getId());
             //stavkaService.findAll();
+
+//            Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke("1");
+//
+//            Stavka stavka = new Stavka();
+//            stavka.setId(3);
+//            stavka.setZaglavlje(zaglavlje);
+//            stavkaService.dodajIliIzmeniStavku(stavka);
+
 
             if (firma != null) {
                 UserFirmaDTO ufDTO = new UserFirmaDTO(foundUser, firma);

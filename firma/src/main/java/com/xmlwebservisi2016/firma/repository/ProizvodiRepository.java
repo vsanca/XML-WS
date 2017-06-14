@@ -2,7 +2,6 @@ package com.xmlwebservisi2016.firma.repository;
 
 import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.model.database_entities.Proizvod;
-import com.xmlwebservisi2016.firma.model.database_entities.ProizvodPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

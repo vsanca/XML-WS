@@ -3,6 +3,7 @@ package com.xmlwebservisi2016.firma.model.database_entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 @Entity(name = "stavka")
 @Table(name = "stavka")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Stavka {
+public class Stavka implements Serializable {
 
     @Id
     @GeneratedValue

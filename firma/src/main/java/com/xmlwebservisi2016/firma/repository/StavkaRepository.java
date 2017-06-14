@@ -1,7 +1,6 @@
 package com.xmlwebservisi2016.firma.repository;
 
 import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
-import com.xmlwebservisi2016.firma.model.database_entities.StavkaPK;
 import com.xmlwebservisi2016.firma.model.database_entities.Zaglavlje;
 import org.springframework.data.jpa.repository.JpaRepository;
 

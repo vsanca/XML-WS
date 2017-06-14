@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 
@@ -13,7 +14,7 @@ import java.sql.Date;
 @Entity(name = "zaglavlje")
 @Table(name = "zaglavlje")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Zaglavlje {
+public class Zaglavlje implements Serializable {
 
     @Id
     @Column(name = "id_poruke")
