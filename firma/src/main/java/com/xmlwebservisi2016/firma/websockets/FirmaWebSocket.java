@@ -1,5 +1,6 @@
 package com.xmlwebservisi2016.firma.websockets;
 
+import com.xmlwebservisi2016.firma.dto.WebSocketFaktureDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
 import com.xmlwebservisi2016.firma.model.database_entities.User;
@@ -113,10 +114,14 @@ public class FirmaWebSocket {
             fakture.add(fakturaZaglavlje);
         }
 
+        WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
+        webSocketFaktureDTO.setFakturaZaglavljeList(fakture);
+        webSocketFaktureDTO.setTip("ZA_POTVRDU");
+
         Session session = sessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                session.getBasicRemote().sendText(Converter.getJSONString(fakture));
+                session.getBasicRemote().sendText(Converter.getJSONString(webSocketFaktureDTO));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -141,10 +146,14 @@ public class FirmaWebSocket {
             fakture.add(fakturaZaglavlje);
         }
 
+        WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
+        webSocketFaktureDTO.setFakturaZaglavljeList(fakture);
+        webSocketFaktureDTO.setTip("POTVRDJENE");
+
         Session session = sessions.get(userId);
         if (session != null && session.isOpen()) {
             try {
-                session.getBasicRemote().sendText(Converter.getJSONString(fakture));
+                session.getBasicRemote().sendText(Converter.getJSONString(webSocketFaktureDTO));
             } catch (IOException e) {
                 e.printStackTrace();
             }
