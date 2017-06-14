@@ -53,8 +53,8 @@ public class FirmaWebSocket {
 
         sessions.put(userId, session);
 
-        faktureZaPotvrdu(userId);
-        potvrdjeneFakture(userId);
+        //faktureZaPotvrdu(userId);
+        //potvrdjeneFakture(userId);
 
         System.out.println(session.getId() + " has opened a connection");
 //        try {
@@ -95,67 +95,11 @@ public class FirmaWebSocket {
     }
 
 
-    private void faktureZaPotvrdu(String userId) {
-        User foundUser = userService.findById(Long.parseLong(userId));
-
-        Firma firma = foundUser.getFirma();
-
-        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalse(firma.getPib()); // TODO [SVS] fix this
-
-        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
-
-        for (Zaglavlje zaglavlje : zaglavljaUToku) {
-            List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
-            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
-        }
-
-        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
-        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
-        webSocketFaktureDTO.setTip("ZA_POTVRDU");
-
-        Session session = sessions.get(userId);
-        if (session != null && session.isOpen()) {
-            try {
-                session.getBasicRemote().sendText(Converter.getJSONString(webSocketFaktureDTO));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void potvrdjeneFakture(String userId) {
-        User foundUser = userService.findById(Long.parseLong(userId));
-
-        Firma firma = foundUser.getFirma();
-
-        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
-
-        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
-
-        for (Zaglavlje zaglavlje : zaglavljaUToku) {
-            List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
-            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
-        }
-
-        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
-        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
-        webSocketFaktureDTO.setTip("POTVRDJENE");
-
-        Session session = sessions.get(userId);
-        if (session != null && session.isOpen()) {
-            try {
-                session.getBasicRemote().sendText(Converter.getJSONString(webSocketFaktureDTO));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void displayMessageToActiveUsers() {
         System.out.println("Displaying messages to active users");
-        for (String userId : sessions.keySet()) {
-            faktureZaPotvrdu(userId);
-            potvrdjeneFakture(userId);
-        }
+//        for (String userId : sessions.keySet()) {
+//            faktureZaPotvrdu(userId);
+//            potvrdjeneFakture(userId);
+//        }
     }
 }

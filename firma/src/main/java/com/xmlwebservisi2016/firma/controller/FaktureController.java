@@ -296,12 +296,8 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public FaktureDTO faktureZaPotvrdu(String userId) {
-        User foundUser = userService.findById(Long.parseLong(userId));
-
-        Firma firma = foundUser.getFirma();
-
-        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalseAndPotvrdjenoIsTrue(firma.getPib()); // TODO [SVS] fix this
+    public FaktureDTO faktureZaPotvrdu(@RequestBody Firma firma) {
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibDobavljacaAndZavrsenoIsFalseAndPotvrdjenoIsFalse(firma.getPib()); // TODO [SVS] fix this
 
         List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
 
@@ -323,11 +319,7 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public FaktureDTO potvrdjeneFakture(String userId) {
-        User foundUser = userService.findById(Long.parseLong(userId));
-
-        Firma firma = foundUser.getFirma();
-
+    public FaktureDTO potvrdjeneFakture(@RequestBody Firma firma) {
         List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
 
         List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();

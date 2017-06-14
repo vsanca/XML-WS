@@ -1,24 +1,30 @@
 <div>
     <div ng-controller="FaktureFirmeController">
-        <table style="border: 1px solid white !important; width:100%;" >
-        <tr>
-        <th>Šifra</th>
-        <th>Naziv</th>
-        <th>Tip</th>
-        <th>Mera</th>
-        <th>Cena</th>
-        <th>Rabat</th>
-        <th>Količina</th>
-        </tr>
-        <tr ng-repeat="p in proizvodiByFirma">
-        <td>{{p.id}}</td>
-        <td>{{p.naziv}}</td>
-        <td>{{p.tip}}</td>
-        <td>{{p.mera}}</td>
-        <td>{{p.cena}}</td>
-        <td>{{p.rabat}}</td>
-        <td>{{p.kolicina}}</td>
-        </tr>
-        </table>
+        <md-list style="border: 1px solid white !important;" class="md-block" flex-gt-sm>
+            <md-subheader class="md-no-sticky">Proizvodi:</md-subheader>
+            <md-divider></md-divider>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text" layout="row" layout-align="start center" >
+                    <span flex>Dobavljač</span>
+                    <span flex></span>
+                    <span flex>Naziv</span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+            <md-list-item class="md-2-line" ng-repeat="f in fakture.zaglavljeStavkeDTOS" >
+                <div class="md-list-item-text" layout="row" layout-align="start center">
+                    <span flex>{{f.zaglavlje.nazivDobavljaca}}</span>
+                    <span flex></span>
+                    <span flex>{{f.zaglavlje.iznosZaUplatu}}</span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+
+            <md-list-item class="md-1-line" ng-if="fakture.zaglavljeStavkeDTOS.zaglavlje.length == 0">
+                <div class="md-list-item-text">
+                    <h3>Nema faktura</h3>
+                </div>
+            </md-list-item>
+        </md-list>
     </div>
 </div>

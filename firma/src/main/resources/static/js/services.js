@@ -5,5 +5,6 @@
 angular.module('firmaApp.services',[
     'firmaApp.LoginFactory',
     'firmaApp.FirmaFactory',
-    'firmaApp.ProizvodFactory'
+    'firmaApp.ProizvodFactory',
+    'firmaApp.FakturaFactory'
 ]);
