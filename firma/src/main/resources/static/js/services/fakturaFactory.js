@@ -10,6 +10,14 @@ angular.module('firmaApp.FakturaFactory', [])
             return $http.post('/faktureZaPotvrdu', id);
         };
 
+        factory.potvrdiKupovinu = function (zaglavlje) {
+            return $http.post('/potvrdiKupovinu', zaglavlje);
+        };
+
+        factory.odbijKupovinu = function (zaglavlje) {
+            return $http.post('/odbijKupovinu', zaglavlje);
+        };
+
         return factory;
 
     });

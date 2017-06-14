@@ -47,8 +47,7 @@ angular.module('firmaApp.ProizvodiFirmeController',[])
                 locals:{proizvodi: proizvodi, firma: $localStorage.logged.firma}
             })
                 .then(function() {
-                    // if(answer.update == false)
-                    //     $scope.pacijentAlergije.push(answer.data);
+
                 });
         }
 

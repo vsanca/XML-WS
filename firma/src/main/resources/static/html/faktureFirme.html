@@ -1,21 +1,45 @@
 <div>
     <div ng-controller="FaktureFirmeController">
         <md-list style="border: 1px solid white !important;" class="md-block" flex-gt-sm>
-            <md-subheader class="md-no-sticky">Proizvodi:</md-subheader>
+            <md-subheader class="md-no-sticky">Fakture:</md-subheader>
             <md-divider></md-divider>
             <md-list-item class="md-2-line">
                 <div class="md-list-item-text" layout="row" layout-align="start center" >
-                    <span flex>Dobavljač</span>
+                    <span flex>PIB kupca</span>
                     <span flex></span>
-                    <span flex>Naziv</span>
+                    <span flex>Kupac</span>
+                    <span flex></span>
+                    <span flex>Adresa</span>
+                    <span flex></span>
+                    <span flex>Roba</span>
+                    <span flex></span>
+                    <span flex>Usluge</span>
+                    <span flex></span>
+                    <span flex>Iznos</span>
+                    <span flex></span>
+                    <span flex="5"></span>
                 </div>
                 <md-divider></md-divider>
             </md-list-item>
             <md-list-item class="md-2-line" ng-repeat="f in fakture.zaglavljeStavkeDTOS" >
-                <div class="md-list-item-text" layout="row" layout-align="start center">
-                    <span flex>{{f.zaglavlje.nazivDobavljaca}}</span>
+                <div class="md-list-item-text" layout="row" layout-align="start center" layout-padding="1">
+                    <span flex>{{f.zaglavlje.pibKupca}}</span>
                     <span flex></span>
-                    <span flex>{{f.zaglavlje.iznosZaUplatu}}</span>
+                    <span flex>{{f.zaglavlje.nazivKupca}}</span>
+                    <span flex></span>
+                    <span flex>{{f.zaglavlje.adresaKupca}}</span>
+                    <span flex></span>
+                    <span flex>{{f.zaglavlje.vrednostRobe | number : 2}} {{f.zaglavlje.oznakaValute}}</span>
+                    <span flex></span>
+                    <span flex>{{f.zaglavlje.vrednostUsluga | number : 2}} {{f.zaglavlje.oznakaValute}}</span>
+                    <span flex></span>
+                    <span flex>{{f.zaglavlje.iznosZaUplatu | number : 2}} {{f.zaglavlje.oznakaValute}}</span>
+                    <span flex></span>
+                    <span flex="5">
+                        <md-button aria-label="lista stavki" style="background-color: blue;" class="md-fab md-mini md-primary md-raised" ng-click="openStavkeDialog($event, f.stavkaList, f.zaglavlje.oznakaValute, f.zaglavlje, f)">
+                            <md-icon md-svg-icon="icons/ic_view_list_white_36px.svg"></md-icon>
+                        </md-button>
+                    </span>
                 </div>
                 <md-divider></md-divider>
             </md-list-item>

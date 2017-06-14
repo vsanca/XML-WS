@@ -1,0 +1,59 @@
+<md-dialog aria-label="Stavke Dialog" flex="90">
+    <md-dialog-content layout-padding>
+        <div class="md-dialog-content" layout-gt-lg>
+            <md-list style="border: 1px solid white !important;" class="md-block">
+                <md-subheader class="md-no-sticky">Stavke:</md-subheader>
+                <md-divider></md-divider>
+                <md-list-item class="md-2-line">
+                    <div class="md-list-item-text" layout="row" layout-align="start center" >
+                        <span flex>Šifra</span>
+                        <span flex></span>
+                        <span flex>Naziv</span>
+                        <span flex></span>
+                        <span flex>Tip</span>
+                        <span flex></span>
+                        <span flex>Mera</span>
+                        <span flex></span>
+                        <span flex>Jed. cena</span>
+                        <span flex></span>
+                        <span flex>Kolicina</span>
+                        <span flex></span>
+                        <span flex>Vrednost</span>
+                    </div>
+                    <md-divider></md-divider>
+                </md-list-item>
+                <md-list-item class="md-2-line" ng-repeat="s in stavke" >
+                    <div class="md-list-item-text" layout="row" layout-align="start center">
+                        <span flex>{{s.proizvod.id}}</span>
+                        <span flex></span>
+                        <span flex>{{s.proizvod.naziv}}</span>
+                        <span flex></span>
+                        <span flex>{{s.proizvod.tip}}</span>
+                        <span flex></span>
+                        <span flex>{{s.proizvod.mera}}</span>
+                        <span flex></span>
+                        <span flex>{{s.proizvod.cena | number: 2}} {{oznakaValute}}</span>
+                        <span flex></span>
+                        <span flex>{{s.kolicina}}</span>
+                        <span flex></span>
+                        <span flex>{{s.vrednost | number: 2}} {{oznakaValute}}</span>
+                    </div>
+                    <md-divider></md-divider>
+                </md-list-item>
+
+                <md-list-item class="md-1-line" ng-if="stavke.length == 0">
+                    <div class="md-list-item-text">
+                        <h3>Nema stavki</h3>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </div>
+    </md-dialog-content>
+
+
+    <md-dialog-actions>
+        <md-button ng-click="potvrdiKupovinu()" class="md-primary">Potvrdi</md-button>
+        <md-button ng-click="odbijKupovinu()" class="md-primary">Odbij</md-button>
+        <md-button ng-click="cancel()" class="md-primary">Izađi</md-button>
+    </md-dialog-actions>
+</md-dialog>
