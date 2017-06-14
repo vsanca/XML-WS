@@ -1,12 +1,11 @@
 package com.xmlwebservisi2016.firma.controller;
 
 import com.xmlwebservisi2016.firma.dto.PibsDTO;
-import com.xmlwebservisi2016.firma.dto.UserFirmaDTO;
-import com.xmlwebservisi2016.firma.model.LoginAttempt;
+import com.xmlwebservisi2016.firma.dto.FaktureDTO;
+import com.xmlwebservisi2016.firma.dto.ZaglavljeStavkeDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.*;
 import com.xmlwebservisi2016.firma.model.jaxb.faktura_zaglavlje.FakturaZaglavlje;
 import com.xmlwebservisi2016.firma.model.jaxb.prenos.NalogZaPrenos;
-import com.xmlwebservisi2016.firma.model.jaxb.tipovi_podataka.TFakturaStavka;
 import com.xmlwebservisi2016.firma.model.jaxb.tipovi_podataka.TOsobaPrenos;
 import com.xmlwebservisi2016.firma.service.*;
 import com.xmlwebservisi2016.firma.util.Converter;
@@ -194,18 +193,22 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Zaglavlje> potvrdiKupovinu(@RequestBody Zaglavlje zaglavlje) {
+    public ResponseEntity<ZaglavljeStavkeDTO> potvrdiKupovinu(@RequestBody Zaglavlje zaglavlje) {
 
         try {
             Zaglavlje zaglavljeRet = zaglavljeService.findByIdPoruke(zaglavlje.getIdPoruke());
             if (zaglavljeRet != null) {
                 zaglavljeRet.setPotvrdjeno(true);
 
-                zaglavljeService.dodajIliIzmeniZaglavlje(zaglavljeRet);
-
-                new FirmaWebSocket().displayMessageToActiveUsers();
-
-                return new ResponseEntity<Zaglavlje>(zaglavljeRet, HttpStatus.OK);
+                zaglavljeRet = zaglavljeService.dodajIliIzmeniZaglavlje(zaglavljeRet);
+                if (zaglavljeRet != null) {
+                    List<Stavka> stavke = stavkaService.findByZaglavlje(zaglavljeRet);
+                    ZaglavljeStavkeDTO zaglavljeStavkeDTO = new ZaglavljeStavkeDTO(zaglavlje, stavke);
+                    new FirmaWebSocket().displayMessageToActiveUsers();
+                    return new ResponseEntity<ZaglavljeStavkeDTO>(zaglavljeStavkeDTO, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                }
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
@@ -249,17 +252,17 @@ public class FaktureController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<FakturaZaglavlje>> mojeFakture(@RequestBody PibsDTO pibsDTO) {
+    public ResponseEntity<FaktureDTO> mojeFakture(@RequestBody PibsDTO pibsDTO) {
         try {
-            List<FakturaZaglavlje> fakture = getMojeFakture(pibsDTO.getMojPib(), pibsDTO.getDrugiPib());
-            return new ResponseEntity<List<FakturaZaglavlje>>(fakture, HttpStatus.OK);
+            FaktureDTO fakture = getMojeFakture(pibsDTO.getMojPib(), pibsDTO.getDrugiPib());
+            return new ResponseEntity<FaktureDTO>(fakture, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
-    private List<FakturaZaglavlje> getMojeFakture(String mojPib, String drugiPib) {
+    private FaktureDTO getMojeFakture(String mojPib, String drugiPib) {
         Objects.requireNonNull(mojPib);
         Objects.requireNonNull(drugiPib);
         List<Zaglavlje> mojeFakture;
@@ -269,16 +272,17 @@ public class FaktureController {
             mojeFakture = zaglavljeService.findByPibDobavljacaAndPibKupca(mojPib, drugiPib);
         }
 
-        List<FakturaZaglavlje> fakture = new ArrayList<>();
+        List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
 
         for (Zaglavlje zaglavlje : mojeFakture) {
-            FakturaZaglavlje fakturaZaglavlje = Converter.fromZaglavljeToFakturaZaglavlje(zaglavlje);
             List <Stavka> stavke = stavkaService.findByZaglavlje(zaglavlje);
-            for (Stavka stavka : stavke) {
-                fakturaZaglavlje.getFakturaStavka().add(Converter.fromStavkaToTFakturaStavka(stavka));
-            }
-            fakture.add(fakturaZaglavlje);
+            zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
         }
-        return fakture;
+
+        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
+        webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
+        webSocketFaktureDTO.setTip("ALL");
+
+        return webSocketFaktureDTO;
     }
 }

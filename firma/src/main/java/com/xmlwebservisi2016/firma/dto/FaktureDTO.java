@@ -9,15 +9,15 @@ import java.util.List;
 /**
  * Created by Svetozar Stojkovic on 6/14/2017.
  */
-public class WebSocketFaktureDTO {
+public class FaktureDTO {
 
     private String tip;
     private List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS;
 
-    public WebSocketFaktureDTO() {
+    public FaktureDTO() {
     }
 
-    public WebSocketFaktureDTO(String tip, List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS) {
+    public FaktureDTO(String tip, List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS) {
         this.tip = tip;
         this.zaglavljeStavkeDTOS = zaglavljeStavkeDTOS;
     }

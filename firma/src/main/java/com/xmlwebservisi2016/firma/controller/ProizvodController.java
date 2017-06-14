@@ -1,6 +1,8 @@
 package com.xmlwebservisi2016.firma.controller;
 
+import com.xmlwebservisi2016.firma.dto.FaktureDTO;
 import com.xmlwebservisi2016.firma.dto.Kupovina;
+import com.xmlwebservisi2016.firma.dto.ZaglavljeStavkeDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.model.database_entities.Proizvod;
 import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
@@ -129,7 +131,7 @@ public class ProizvodController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity kupiProizvod(@RequestBody Kupovina kupovina) throws DatatypeConfigurationException {
+    public ResponseEntity<ZaglavljeStavkeDTO> kupiProizvod(@RequestBody Kupovina kupovina) throws DatatypeConfigurationException {
 
         try {
             Firma prodavac = firmaService.findById(kupovina.getProizvodi().get(0).getFirma().getId());
@@ -214,15 +216,16 @@ public class ProizvodController {
                     }
                 }
                 System.out.println(Converter.getJSONString(zaglavljeRet));
+                ZaglavljeStavkeDTO zaglavljeStavkeDTO = new ZaglavljeStavkeDTO(zaglavlje, stavke);
                 new FirmaWebSocket().displayMessageToActiveUsers();
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<ZaglavljeStavkeDTO>(zaglavljeStavkeDTO, HttpStatus.OK);
 
             } else {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
     }

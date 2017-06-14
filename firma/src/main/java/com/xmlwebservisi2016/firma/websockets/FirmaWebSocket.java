@@ -1,14 +1,11 @@
 package com.xmlwebservisi2016.firma.websockets;
 
-import com.xmlwebservisi2016.firma.dto.WebSocketFaktureDTO;
+import com.xmlwebservisi2016.firma.dto.FaktureDTO;
 import com.xmlwebservisi2016.firma.dto.ZaglavljeStavkeDTO;
 import com.xmlwebservisi2016.firma.model.database_entities.Firma;
 import com.xmlwebservisi2016.firma.model.database_entities.Stavka;
 import com.xmlwebservisi2016.firma.model.database_entities.User;
 import com.xmlwebservisi2016.firma.model.database_entities.Zaglavlje;
-import com.xmlwebservisi2016.firma.model.jaxb.faktura_zaglavlje.FakturaZaglavlje;
-import com.xmlwebservisi2016.firma.repository.StavkaRepository;
-import com.xmlwebservisi2016.firma.repository.ZaglavljeRepository;
 import com.xmlwebservisi2016.firma.service.StavkaService;
 import com.xmlwebservisi2016.firma.service.UserService;
 import com.xmlwebservisi2016.firma.service.ZaglavljeService;
@@ -111,7 +108,7 @@ public class FirmaWebSocket {
             zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
         }
 
-        WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
+        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
         webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
         webSocketFaktureDTO.setTip("ZA_POTVRDU");
 
@@ -139,7 +136,7 @@ public class FirmaWebSocket {
             zaglavljeStavkeDTOS.add(new ZaglavljeStavkeDTO(zaglavlje, stavke));
         }
 
-        WebSocketFaktureDTO webSocketFaktureDTO = new WebSocketFaktureDTO();
+        FaktureDTO webSocketFaktureDTO = new FaktureDTO();
         webSocketFaktureDTO.setZaglavljeStavkeDTOS(zaglavljeStavkeDTOS);
         webSocketFaktureDTO.setTip("POTVRDJENE");
 
