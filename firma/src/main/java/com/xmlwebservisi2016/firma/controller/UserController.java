@@ -61,12 +61,12 @@ public class UserController {
             //Firma firma = firmaService.findById(foundUser.getFirma().getId());
             //stavkaService.findAll();
 
-            Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke("1");
-
-            Stavka stavka = new Stavka();
-            stavka.setId(3);
-            stavka.setZaglavlje(zaglavlje);
-            stavkaService.dodajIliIzmeniStavku(stavka);
+//            Zaglavlje zaglavlje = zaglavljeService.findByIdPoruke("1");
+//
+//            Stavka stavka = new Stavka();
+//            stavka.setId(3);
+//            stavka.setZaglavlje(zaglavlje);
+//            stavkaService.dodajIliIzmeniStavku(stavka);
 
 
             if (firma != null) {
