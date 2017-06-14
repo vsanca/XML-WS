@@ -3,5 +3,6 @@
  */
 
 angular.module('firmaApp.controllers',[
-    'firmaApp.LoginController'
+    'firmaApp.NavigationController',
+    'firmaApp.ProizvodiFirmeController'
 ]);

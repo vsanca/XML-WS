@@ -11,12 +11,12 @@ import java.io.Serializable;
 @Entity(name = "proizvod")
 @Table(name = "proizvod")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@IdClass(ProizvodPK.class)
 public class Proizvod implements Serializable {
 
     private static String USLUGA = "USLUGA";
     private static String ROBA = "ROBA";
 
+    @Id
     @GeneratedValue
     @Column(name = "pid")
     private long id;
@@ -24,7 +24,7 @@ public class Proizvod implements Serializable {
     @Column(name = "ptip")
     private String tip;
 
-    @Id
+
     @Column(name = "pname")
     private String naziv;
 
@@ -40,7 +40,6 @@ public class Proizvod implements Serializable {
     @Column(name = "pkolicina")
     private long kolicina;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fid", referencedColumnName = "fid")
     private Firma firma;

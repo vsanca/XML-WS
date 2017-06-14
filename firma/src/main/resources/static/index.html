@@ -28,13 +28,50 @@
 
     <!--Services-->
     <script src="js/services/loginFactory.js"></script>
+    <script src="js/services/firmaFactory.js"></script>
+    <script src="js/services/proizvodFactory.js"></script>
 
     <!--Controllers-->
-    <script src="js/controllers/loginController.js"></script>
+    <script src="js/controllers/navigationController.js"></script>
+    <script src="js/controllers/proizvodiFirmeController.js"></script>
 
+    <link rel="stylesheet" href="css/myStyle.css">
 </head>
 
 <body>
-<div ng-view></div>
+    <div ng-controller="NavigationController">
+        <md-toolbar md-scroll-shrink style="background-color: green;">
+            <div class="md-toolbar-tools">
+                Firma
+
+                <span flex></span>
+                <md-button class="md-raised" aria-label="Prijavi se" ng-click="openPrijavaDijalog($event)" ng-if="!showOdjaviSe">
+                    Prijavi se
+                </md-button>
+                <md-button class="md-raised" aria-label="Odjavi se" ng-click="odjaviSe()" ng-if="showOdjaviSe">
+                    Odjavi se
+                </md-button>
+
+            </div>
+        </md-toolbar>
+
+        <div ng-cloak class="navigationBarClass">
+            <md-content class="md-padding" >
+                <md-nav-bar
+                        md-selected-nav-item="currentNavItem"
+                        nav-bar-aria-label="navigation links"
+                        >
+                    <md-nav-item md-nav-href="#/" name="Pocetna" ng-click="saveNav('Pocetna')">Početna</md-nav-item>
+                    <md-nav-item md-nav-href="#/proizvodiFirme" name="ProizvodiFirme" ng-click="saveNav('ProizvodiFirme')" ng-if="showFirma">Proizvodi</md-nav-item>
+
+                </md-nav-bar>
+                <div class="ext-content">
+                    <div ng-view>
+
+                    </div>
+                </div>
+            </md-content>
+        </div>
+    </div>
 </body>
 </html>

@@ -14,7 +14,7 @@ public interface ProizvodService {
 
     List<Proizvod> findAll();
 
-    List<Proizvod> getProizvodiZaFirmu(Firma fid);
+    List<Proizvod> findByFirma(Firma firma);
 
     Proizvod dodajIliIzmeniProizvod(Proizvod proizvod);
 

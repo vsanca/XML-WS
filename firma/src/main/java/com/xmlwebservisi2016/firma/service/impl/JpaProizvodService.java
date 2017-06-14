@@ -32,8 +32,8 @@ public class JpaProizvodService implements ProizvodService {
     }
 
     @Override
-    public List<Proizvod> getProizvodiZaFirmu(Firma fid) {
-        return proizvodiRepository.findByFirma(fid);
+    public List<Proizvod> findByFirma(Firma firma) {
+        return proizvodiRepository.findByFirma(firma);
     }
 
     @Override

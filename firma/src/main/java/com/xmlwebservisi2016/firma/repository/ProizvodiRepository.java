@@ -18,6 +18,6 @@ public interface ProizvodiRepository extends JpaRepository<Proizvod, ProizvodPK>
 
     List<Proizvod> findAll();
 
-    List<Proizvod> findByFirma(Firma fid);
+    List<Proizvod> findByFirma(Firma firma);
 
 }

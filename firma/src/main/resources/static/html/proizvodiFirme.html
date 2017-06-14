@@ -1,0 +1,95 @@
+<div>
+    <div ng-controller="ProizvodiFirmeController">
+        <md-autocomplete
+                md-no-cache="true"
+                md-selected-item="firma"
+                md-items="f in firme | filter : searchText"
+                md-search-text="searchText"
+                md-item-text="f.name"
+                placeholder="Odaberite firmu"
+                md-min-length="0"
+                md-menu-class="autocomplete-custom-template"
+                md-selected-item-change="getProizvodiByFirma(f)">
+            <md-item-template>
+                <span class="item-title">
+                    <strong><span md-highlight-text="searchText" md-highlight-flags="^i">{{f.name}}</span></strong>
+                </span>
+
+                <span class="item-metadata">
+                    <span>
+                      {{f.adresa}}
+                    </span>
+                </span>
+
+            </md-item-template>
+            <md-not-found>
+                Ne postoji firma sa unetim podacima.
+            </md-not-found>
+        </md-autocomplete>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Naziv</label>
+                <input ng-model="firma.name" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Adresa</label>
+                <input ng-model="firma.adresa" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>PIB</label>
+                <input ng-model="firma.pib" disabled>
+            </md-input-container>
+        </div>
+
+
+        <md-list style="border: 1px solid #ccc !important;" class="md-block" flex-gt-sm>
+            <md-subheader class="md-no-sticky">Proizvodi:</md-subheader>
+            <md-divider></md-divider>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text" layout="row" layout-align="start center">
+                    <span flex="5">Šifra</span>
+                    <span flex="5"></span>
+                    <span flex="15">Naziv</span>
+                    <span flex="5"></span>
+                    <span flex="5">Tip</span>
+                    <span flex="5"></span>
+                    <span flex="5">Mera</span>
+                    <span flex="5"></span>
+                    <span flex="5">Cena</span>
+                    <span flex="5"></span>
+                    <span flex="5">Rabat</span>
+                    <span flex="5"></span>
+                    <span flex="5">Količina</span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+            <md-list-item class="md-2-line" ng-repeat="p in proizvodiByFirma">
+                <div class="md-list-item-text" layout="row" layout-align="start center">
+                    <span flex="5">{{p.id}}</span>
+                    <span flex="5"></span>
+                    <span flex="15">{{p.naziv}}</span>
+                    <span flex="5"></span>
+                    <span flex="5">{{p.tip}}</span>
+                    <span flex="5"></span>
+                    <span flex="5">{{p.mera}}</span>
+                    <span flex="5"></span>
+                    <span flex="5">{{p.cena}}</span>
+                    <span flex="5"></span>
+                    <span flex="5">{{p.rabat}}</span>
+                    <span flex="5"></span>
+                    <span flex="5">{{p.kolicina}}</span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+
+            <md-list-item class="md-1-line" ng-if="proizvodiByFirma.length == 0">
+                <div class="md-list-item-text">
+                    <h3>Nema proizvoda</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
+</div>

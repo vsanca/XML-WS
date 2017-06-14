@@ -3,5 +3,7 @@
  */
 
 angular.module('firmaApp.services',[
-    'firmaApp.LoginFactory'
+    'firmaApp.LoginFactory',
+    'firmaApp.FirmaFactory',
+    'firmaApp.ProizvodFactory'
 ]);

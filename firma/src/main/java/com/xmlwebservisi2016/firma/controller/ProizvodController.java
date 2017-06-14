@@ -89,15 +89,15 @@ public class ProizvodController {
             value = "/getZaFirmu",
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<List<Proizvod>> getProizvodZaFirmu(@RequestBody Long fid) {
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Proizvod>> getProizvodZaFirmu(@RequestBody Long fid) throws Exception {
 
+        System.out.println(fid);
         Firma firma = firmaService.findById(fid);
-
+        System.out.println(firma.getId());
         if (firma != null) {
 
-            List<Proizvod> proizvodi = proizvodService.getProizvodiZaFirmu(firma);
+            List<Proizvod> proizvodi = proizvodService.findByFirma(firma);
             if (proizvodi != null) {
                 return new ResponseEntity<List<Proizvod>>(proizvodi, HttpStatus.OK);
             } else {

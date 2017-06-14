@@ -11,6 +11,6 @@ var app = angular.module('firmaApp', [
 
 app.config(function($mdThemingProvider) {
     $mdThemingProvider.theme('default')
-        .primaryPalette('grey')
-        .accentPalette('yellow');
+        .primaryPalette('green')
+        .accentPalette('green');
 });
