@@ -93,7 +93,7 @@ public class IzvodController  {
                     outputIzvod.getZaglavlje().setUkupnoUKorist(izvod.getZaglavlje().getUkupnoUKorist());
                     outputIzvod.getZaglavlje().setUkupnoNaTeret(izvod.getZaglavlje().getUkupnoNaTeret());
                     outputIzvod.getZaglavlje().setBrojPromenaUKorist(izvod.getZaglavlje().getBrojPromenaUKorist());
-                    outputIzvod.getZaglavlje().setBrojPromenaUKorist(izvod.getZaglavlje().getBrojPromenaNaTeret());
+                    outputIzvod.getZaglavlje().setBrojPromenaNaTeret(izvod.getZaglavlje().getBrojPromenaNaTeret());
 
                     outputIzvod.getPresek().getStavkaPreseka().addAll(izvod.getPresek().getStavkaPreseka());
 
