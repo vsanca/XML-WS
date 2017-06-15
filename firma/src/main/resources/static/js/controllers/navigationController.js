@@ -34,7 +34,7 @@ angular.module('firmaApp.NavigationController',[])
 
             $mdToast.show(
                 $mdToast.simple()
-                    .textContent('Успешно сте се одјавили!')
+                    .textContent('Uspešno ste se odjavili!')
                     .hideDelay(3000)
                     .position('top center')
                     .theme('success-toast')
@@ -68,7 +68,7 @@ angular.module('firmaApp.NavigationController',[])
 
                         $mdToast.show(
                             $mdToast.simple()
-                                .textContent('Успешно сте се пријавили!')
+                                .textContent('Uspešno ste se prijavili!')
                                 .hideDelay(3000)
                                 .position('top center')
                                 .theme('success-toast')
@@ -80,7 +80,7 @@ angular.module('firmaApp.NavigationController',[])
                         $scope.user.password = '';
                         $mdToast.show(
                             $mdToast.simple()
-                                .textContent('Погрешно кориснички име или лозинка!')
+                                .textContent('Pogrešno korisničko ime ili lozinka!')
                                 .hideDelay(3000)
                                 .position('top center')
                                 .theme('error-toast')

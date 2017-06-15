@@ -5,5 +5,6 @@
 angular.module('firmaApp.controllers',[
     'firmaApp.NavigationController',
     'firmaApp.ProizvodiFirmeController',
-    'firmaApp.FaktureFirmeController'
+    'firmaApp.FaktureFirmeController',
+    'firmaApp.PotvrdjeneFaktureFirmeController'
 ]);

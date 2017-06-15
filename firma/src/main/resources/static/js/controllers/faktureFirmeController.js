@@ -63,31 +63,6 @@ angular.module('firmaApp.FaktureFirmeController',[])
                     $mdDialog.hide(faktura);
                 });
             };
-            // $scope.kupovina = {
-            //     "kupacID": null,
-            //     "proizvodi": [],
-            //     "kolicine": [],
-            //     "oznakaValute": "RSD"
-            // }
-            // $scope.kupi = function () {
-            //     $scope.kupovina.kupacID = firma.id;
-            //     for(var i = 0; i < $scope.proizvodiZaKupovinu.length; i++){
-            //         $scope.kupovina.proizvodi.push($scope.proizvodiZaKupovinu[i].proizvod);
-            //         $scope.kupovina.kolicine.push($scope.proizvodiZaKupovinu[i].kolicina);
-            //     }
-            //
-            //     ProizvodFactory.kupiProizvode($scope.kupovina).success(function () {
-            //         $mdToast.show(
-            //             $mdToast.simple()
-            //                 .textContent('Uspešno ste poslali fakturu!')
-            //                 .hideDelay(3000)
-            //                 .position('top center')
-            //                 .theme('success-toast')
-            //         );
-            //
-            //         $mdDialog.hide();
-            //     });
-            // };
 
             $scope.cancel = function() {
                 $mdDialog.cancel();
