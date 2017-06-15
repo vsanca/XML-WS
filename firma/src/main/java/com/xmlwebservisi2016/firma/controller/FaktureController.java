@@ -21,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.websocket.Session;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -69,6 +73,19 @@ public class FaktureController {
             Firma kupac = firmaService.findByPib(zaglavlje.getPibKupca());
 
             if (prodavac != null && kupac != null && zaglavlje.isPotvrdjeno()) {
+
+                GregorianCalendar gregor = new GregorianCalendar();
+                Date date = new Date(System.currentTimeMillis());
+                gregor.setTime(date);
+                XMLGregorianCalendar xmlGregor = null;
+                try {
+                    xmlGregor = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+                            gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+                            gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+                } catch (DatatypeConfigurationException e) {
+                    e.printStackTrace();
+                }
+
                 NalogZaPrenos nalogZaPrenos = new NalogZaPrenos();
                 nalogZaPrenos.setIdPoruke(UUID.randomUUID().toString());
                 nalogZaPrenos.setSvrhaPlacanja("kupovina");
@@ -88,13 +105,13 @@ public class FaktureController {
 
                 podaciOPrenosu.setDuznikPrenos(duznik);
                 podaciOPrenosu.setPoverilacPrenos(primalac);
-                podaciOPrenosu.setDatumValute(Converter.fromDateToXMLGregorianCalendar(zaglavlje.getDatumValute().getTime()));
+                podaciOPrenosu.setDatumValute(xmlGregor);
                 podaciOPrenosu.setOznakaValute(zaglavlje.getOznakaValute());
                 podaciOPrenosu.setIznos(zaglavlje.getIznosZaUplatu());
 
                 nalogZaPrenos.setPodaciOPrenosu(podaciOPrenosu);
 
-                nalogZaPrenos.setDatumNaloga(Converter.fromDateToXMLGregorianCalendar(zaglavlje.getDatumRacuna().getTime()));
+                nalogZaPrenos.setDatumNaloga(xmlGregor);
 
                 Zaglavlje zaglavljeRet = zaglavljeService.findByIdPoruke(zaglavlje.getIdPoruke());
                 zaglavljeRet.setZavrseno(true);
@@ -123,6 +140,34 @@ public class FaktureController {
     )
     public ResponseEntity<Boolean> posaljiNalogZaPrenosBanci(@RequestBody NalogZaPrenos nalogZaPrenos) {
         Objects.requireNonNull(nalogZaPrenos);
+
+        GregorianCalendar gregor = new GregorianCalendar();
+        Date dateNaloga = new Date(nalogZaPrenos.getDatumNaloga().getMillisecond());
+        gregor.setTime(dateNaloga);
+        XMLGregorianCalendar xmlGregorNaloga = null;
+        try {
+            xmlGregorNaloga = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+                    gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+                    gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        nalogZaPrenos.setDatumNaloga(xmlGregorNaloga);
+
+        Date dateValute = new Date(nalogZaPrenos.getPodaciOPrenosu().getDatumValute().getMillisecond());
+        gregor.setTime(dateValute);
+        XMLGregorianCalendar xmlGregorValute = null;
+        try {
+            xmlGregorValute = DatatypeFactory.newInstance().newXMLGregorianCalendarDate(
+                    gregor.get(Calendar.YEAR), gregor.get(Calendar.MONTH)+1,
+                    gregor.get(Calendar.DAY_OF_MONTH), DatatypeConstants.FIELD_UNDEFINED);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        nalogZaPrenos.getPodaciOPrenosu().setDatumValute(xmlGregorValute);
+
         try {
             Firma firma = firmaService.findByBrojRacuna(nalogZaPrenos.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna());
             boolean retVal = false;
