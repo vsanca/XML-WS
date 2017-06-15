@@ -16,7 +16,7 @@ public interface ZaglavljeRepository extends JpaRepository<Zaglavlje, String> {
 
     List<Zaglavlje> findByPibDobavljacaAndZavrsenoIsFalseAndPotvrdjenoIsFalse(String pib);
 
-    List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsFalse(String pib);
+    List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsTrueAndZavrsenoIsFalse(String pib);
 
     List<Zaglavlje> findByPibDobavljacaAndPibKupca(String pibDobavljaca, String pibKupca);
 

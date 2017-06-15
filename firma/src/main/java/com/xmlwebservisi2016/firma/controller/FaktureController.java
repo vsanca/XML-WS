@@ -320,7 +320,7 @@ public class FaktureController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public FaktureDTO potvrdjeneFakture(@RequestBody Firma firma) {
-        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsFalse(firma.getPib());
+        List<Zaglavlje> zaglavljaUToku = zaglavljeService.findByPibKupcaAndPotvrdjenoIsTrueAndZavrsenoIsFalse(firma.getPib());
 
         List<ZaglavljeStavkeDTO> zaglavljeStavkeDTOS = new ArrayList<>();
 

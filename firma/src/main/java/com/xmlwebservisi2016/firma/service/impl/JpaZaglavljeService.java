@@ -40,8 +40,8 @@ public class JpaZaglavljeService implements ZaglavljeService {
     }
 
     @Override
-    public List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsFalse(String pib) {
-        return zaglavljeRepository.findByPibKupcaAndPotvrdjenoIsFalse(pib);
+    public List<Zaglavlje> findByPibKupcaAndPotvrdjenoIsTrueAndZavrsenoIsFalse(String pib) {
+        return zaglavljeRepository.findByPibKupcaAndPotvrdjenoIsTrueAndZavrsenoIsFalse(pib);
     }
 
     @Override
