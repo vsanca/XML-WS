@@ -4,8 +4,8 @@ INSERT INTO firma (fid, banka_port, fname, fadresa, fbroj_racuna, fpoziv_na_broj
 
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (1,'USLUGA', 'Donji ves', 'kg', 100, 10, 20, 1, 1);
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (2,'ROBA', 'Lizalice', 'g', 150, 5, 34, 1, 1);
-INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (3,'ROBA', 'Jagone', 'kg', 500, 10, 100, 2, 1);
-INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (4,'ROBA', 'Banane', 'kg', 280, 15, 150, 2, 1);
+INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (3,'ROBA', 'Jagone', 'kg', 500, 10, 1000, 2, 1);
+INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (4,'ROBA', 'Banane', 'kg', 280, 15, 1500, 2, 1);
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (5,'ROBA', 'Breskve', 'kg', 120, 5, 130, 2, 1);
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (6,'ROBA', 'Kajsije', 'kg', 180, 7, 80, 2, 1);
 INSERT INTO proizvod (pid, ptip, pname, pmera, pcena, prabat, pkolicina, fid, version) VALUES (7,'USLUGA', 'Kredit home', 'din', 10000, 5, 5, 3, 1);

@@ -147,7 +147,11 @@ public class BankaImpl implements Banka {
     		xmlDocManager.read(docSum.getUri(), readHandle);
     		nalozi.add(readHandle.get());
     		
-    	}	
+    	}
+    	
+    	if (nalozi.isEmpty()) {
+    		return null;
+    	}
     	
     	try {
 			context = JAXBContext.newInstance(BankaRacunKlijenta.class);
@@ -236,6 +240,10 @@ public class BankaImpl implements Banka {
     			
     		}
  
+    	}
+    	
+    	if (presek.getStavkaPreseka().isEmpty()) {
+    		return null;
     	}
     	
     	zaglavlje.setBrojPromenaNaTeret(brojNaTeret);

@@ -70,7 +70,7 @@ public class IzvodController  {
             outputIzvod.setPresek(presek);
             Izvod izvod = new Izvod();
 
-            int i=0;
+            int i=1;
             while (izvod != null) {
                 ZahtevZaIzvod zahtevZaIzvod = new ZahtevZaIzvod();
 
@@ -90,12 +90,14 @@ public class IzvodController  {
                     outputIzvod.getZaglavlje().setNovoStanje(izvod.getZaglavlje().getNovoStanje());
                     outputIzvod.getZaglavlje().setPrethodnoStanje(izvod.getZaglavlje().getPrethodnoStanje());
 
-                    outputIzvod.getZaglavlje().setUkupnoUKorist(outputIzvod.getZaglavlje().getUkupnoUKorist().add(izvod.getZaglavlje().getUkupnoUKorist()));
-                    outputIzvod.getZaglavlje().setUkupnoNaTeret(outputIzvod.getZaglavlje().getUkupnoNaTeret().add(izvod.getZaglavlje().getUkupnoNaTeret()));
-                    outputIzvod.getZaglavlje().setBrojPromenaUKorist(outputIzvod.getZaglavlje().getBrojPromenaUKorist() + izvod.getZaglavlje().getBrojPromenaUKorist());
-                    outputIzvod.getZaglavlje().setBrojPromenaUKorist(outputIzvod.getZaglavlje().getBrojPromenaNaTeret() + izvod.getZaglavlje().getBrojPromenaNaTeret());
+                    outputIzvod.getZaglavlje().setUkupnoUKorist(izvod.getZaglavlje().getUkupnoUKorist());
+                    outputIzvod.getZaglavlje().setUkupnoNaTeret(izvod.getZaglavlje().getUkupnoNaTeret());
+                    outputIzvod.getZaglavlje().setBrojPromenaUKorist(izvod.getZaglavlje().getBrojPromenaUKorist());
+                    outputIzvod.getZaglavlje().setBrojPromenaUKorist(izvod.getZaglavlje().getBrojPromenaNaTeret());
 
                     outputIzvod.getPresek().getStavkaPreseka().addAll(izvod.getPresek().getStavkaPreseka());
+
+                    i++;
                 }
             }
 
