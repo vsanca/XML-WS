@@ -1,0 +1,89 @@
+<md-dialog aria-label="Stavke izvoda Dialog" flex="90">
+    <md-dialog-content layout-padding>
+        <div class="md-dialog-content" layout-gt-lg>
+            <div layout-gt-sm="row">
+                <div layout-gt-sm="column" flex-gt-sm style="border: 3px solid lightgreen;" layout-margin="1" layout-padding="1">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Dužnik</label>
+                        <input ng-model="s.duznikNalogodavac" disabled>
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Broj računa</label>
+                        <input ng-model="s.podaciOPrenosu.duznikPrenos.brojRacuna" disabled>
+                    </md-input-container>
+
+                    <div layout-gt-sm="row">
+                        <md-input-container class="md-block" flex="15">
+                            <label>Model</label>
+                            <input ng-model="s.podaciOPrenosu.duznikPrenos.model" disabled>
+                        </md-input-container>
+
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Poziv na broj</label>
+                            <input ng-model="s.podaciOPrenosu.duznikPrenos.pozivNaBroj" disabled>
+                        </md-input-container>
+                    </div>
+                </div>
+
+                <div layout-gt-sm="column" flex-gt-sm style="border: 3px solid lightgreen;" layout-margin="1" layout-padding="1">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Primalac</label>
+                        <input ng-model="s.primalacPoverilac" disabled>
+                    </md-input-container>
+
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <label>Broj računa</label>
+                        <input ng-model="s.podaciOPrenosu.poverilacPrenos.brojRacuna" disabled>
+                    </md-input-container>
+
+                    <div layout-gt-sm="row">
+                        <md-input-container class="md-block" flex="15">
+                            <label>Model</label>
+                            <input ng-model="s.podaciOPrenosu.poverilacPrenos.model" disabled>
+                        </md-input-container>
+
+                        <md-input-container class="md-block" flex-gt-sm>
+                            <label>Poziv na broj</label>
+                            <input ng-model="s.podaciOPrenosu.poverilacPrenos.pozivNaBroj" disabled>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+
+            <div layout-gt-sm="row" style="border: 3px solid lightgreen;" layout-margin="1" layout-padding="1">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Svrha plaćanja</label>
+                    <input ng-model="s.svrhaPlacanja" disabled>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Smer</label>
+                    <input ng-model="s.smer" disabled>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Iznos (RSD)</label>
+                    <input ng-model="s.podaciOPrenosu.iznos | number:2" disabled>
+                </md-input-container>
+            </div>
+
+            <div layout-gt-sm="row" style="border: 3px solid lightgreen;" layout-margin="1" layout-padding="1">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Datum naloga</label>
+                    <input ng-model="s.datumNaloga | date:'dd.MM.yyyy.'" disabled>
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Datum valute</label>
+                    <input ng-model="s.podaciOPrenosu.datumValute | date:'dd.MM.yyyy.'" disabled>
+                </md-input-container>
+            </div>
+        </div>
+    </md-dialog-content>
+
+
+    <md-dialog-actions>
+        <md-button ng-click="cancel()" class="md-primary">Izađi</md-button>
+    </md-dialog-actions>
+</md-dialog>

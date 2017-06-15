@@ -31,12 +31,14 @@
     <script src="js/services/firmaFactory.js"></script>
     <script src="js/services/proizvodFactory.js"></script>
     <script src="js/services/fakturaFactory.js"></script>
+    <script src="js/services/izvodFactory.js"></script>
 
     <!--Controllers-->
     <script src="js/controllers/navigationController.js"></script>
     <script src="js/controllers/proizvodiFirmeController.js"></script>
     <script src="js/controllers/faktureFirmeController.js"></script>
     <script src="js/controllers/potvrdjeneFaktureFirmeController.js"></script>
+    <script src="js/controllers/izvodController.js"></script>
 
     <link rel="stylesheet" href="css/myStyle.css">
 </head>
@@ -68,6 +70,7 @@
                     <md-nav-item md-nav-href="#/proizvodiFirme" name="ProizvodiFirme" ng-click="saveNav('ProizvodiFirme')" ng-if="showFirma">Proizvodi</md-nav-item>
                     <md-nav-item md-nav-href="#/faktureFirme" name="FaktureFirme" ng-click="saveNav('FaktureFirme')" ng-if="showFirma">Zahtevi za kupovinu</md-nav-item>
                     <md-nav-item md-nav-href="#/potvrdjeneFaktureFirme" name="PotvrdjeneFaktureFirme" ng-click="saveNav('PotvrdjeneFaktureFirme')" ng-if="showFirma">Fakture</md-nav-item>
+                    <md-nav-item md-nav-href="#/izvodi" name="Izvodi" ng-click="saveNav('Izvodi')" ng-if="showFirma">Izvodi</md-nav-item>
                 </md-nav-bar>
                 <div class="ext-content">
                     <div ng-view>

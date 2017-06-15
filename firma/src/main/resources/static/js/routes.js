@@ -17,5 +17,8 @@ app.config(['$routeProvider','$httpProvider', function ($routeProvider, $httpPro
         })
         .when('/potvrdjeneFaktureFirme', {
             templateUrl: 'html/potvrdjeneFaktureFirme.html'
+        })
+        .when('/izvodi', {
+            templateUrl: 'html/izvodi.html'
         });
 }]);

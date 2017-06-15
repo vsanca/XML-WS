@@ -44,7 +44,7 @@ angular.module('firmaApp.PotvrdjeneFaktureFirmeController',[])
                             FakturaFactory.novo_stanje_proizvoda(zaglavlje).success(function (data) {
                                 $mdToast.show(
                                     $mdToast.simple()
-                                        .textContent('Uspešno ste potvrdili fakturu!')
+                                        .textContent('Uspešno ste poslali nalog!')
                                         .hideDelay(3000)
                                         .position('top center')
                                         .theme('success-toast')
@@ -55,7 +55,7 @@ angular.module('firmaApp.PotvrdjeneFaktureFirmeController',[])
                         }else{
                             $mdToast.show(
                                 $mdToast.simple()
-                                    .textContent('Uspešno ste potvrdili fakturu!')
+                                    .textContent('Neuspešno slanje fakture!')
                                     .hideDelay(3000)
                                     .position('top center')
                                     .theme('error-toast')

@@ -1,0 +1,103 @@
+<div>
+    <div ng-controller="IzvodController">
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Datum</label>
+                <md-datepicker ng-model="datum" ng-change="getIzvod()"></md-datepicker>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Broj računa</label>
+                <input ng-model="izvod.zaglavlje.brojRacuna" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Prethodno stanje (RSD)</label>
+                <input ng-model="izvod.zaglavlje.prethodnoStanje | number:2" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Novo stanje (RSD)</label>
+                <input ng-model="izvod.zaglavlje.novoStanje | number:2" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Broj preseka</label>
+                <input ng-model="izvod.zaglavlje.brojPreseka" disabled>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Broj promena na teret</label>
+                <input ng-model="izvod.zaglavlje.brojPromenaNaTeret" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Ukupno na teret</label>
+                <input ng-model="izvod.zaglavlje.ukupnoNaTeret" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Broj promena u korist</label>
+                <input ng-model="izvod.zaglavlje.brojPromenaUKorist" disabled>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Ukupno u korist</label>
+                <input ng-model="izvod.zaglavlje.ukupnoUKorist" disabled>
+            </md-input-container>
+        </div>
+
+
+        <md-list style="border: 1px solid white !important;" class="md-block" flex-gt-sm>
+            <md-subheader class="md-no-sticky">Stavke izvoda:</md-subheader>
+            <md-divider></md-divider>
+            <md-list-item class="md-2-line">
+                <div class="md-list-item-text" layout="row" layout-align="start center" >
+                    <span flex>Duznik</span>
+                    <span flex></span>
+                    <span flex>Primalac</span>
+                    <span flex></span>
+                    <span flex>Svrha placanja</span>
+                    <span flex></span>
+                    <span flex>Smer</span>
+                    <span flex></span>
+                    <span flex>Iznos</span>
+                    <span flex></span>
+                    <span flex="5"></span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+            <md-list-item class="md-2-line" ng-repeat="s in izvod.presek.stavkaPreseka" >
+                <div class="md-list-item-text" layout="row" layout-align="start center" layout-padding="1">
+                    <span flex>{{s.duznikNalogodavac}}</span>
+                    <span flex></span>
+                    <span flex>{{s.primalacPoverilac}}</span>
+                    <span flex></span>
+                    <span flex>{{s.svrhaPlacanja}}</span>
+                    <span flex></span>
+                    <span flex>{{s.smer}}</span>
+                    <span flex></span>
+                    <span flex>{{s.podaciOPrenosu.iznos}} RSD</span>
+                    <span flex></span>
+                    <span flex="5">
+                        <md-button aria-label="stavka" style="background-color: blue;" class="md-fab md-mini md-primary md-raised" ng-click="openStavkaDialog($event, s)">
+                            <md-icon md-svg-icon="icons/ic_search_white_36px.svg"></md-icon>
+                        </md-button>
+                    </span>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+
+            <md-list-item class="md-1-line" ng-if="izvod.presek.stavkaPreseka.length == 0">
+                <div class="md-list-item-text">
+                    <h3>Nema stavki</h3>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
+</div>
