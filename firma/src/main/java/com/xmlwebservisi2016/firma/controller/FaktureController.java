@@ -141,8 +141,12 @@ public class FaktureController {
     public ResponseEntity<Boolean> posaljiNalogZaPrenosBanci(@RequestBody NalogZaPrenos nalogZaPrenos) {
         Objects.requireNonNull(nalogZaPrenos);
 
+        System.out.println("NalogZaPrenos: "+Converter.getJSONString(nalogZaPrenos));
+        System.out.println("DatumNaloga: "+nalogZaPrenos.getDatumNaloga().toString());
+
         GregorianCalendar gregor = new GregorianCalendar();
-        Date dateNaloga = new Date(nalogZaPrenos.getDatumNaloga().getMillisecond());
+        Date dateNaloga = nalogZaPrenos.getDatumNaloga().toGregorianCalendar().getTime();
+        System.out.println("java.util.Date: "+dateNaloga.toString());
         gregor.setTime(dateNaloga);
         XMLGregorianCalendar xmlGregorNaloga = null;
         try {
@@ -154,8 +158,9 @@ public class FaktureController {
         }
 
         nalogZaPrenos.setDatumNaloga(xmlGregorNaloga);
+        System.out.println("DatumNaloga: "+nalogZaPrenos.getDatumNaloga().toString());
 
-        Date dateValute = new Date(nalogZaPrenos.getPodaciOPrenosu().getDatumValute().getMillisecond());
+        Date dateValute = nalogZaPrenos.getDatumNaloga().toGregorianCalendar().getTime();
         gregor.setTime(dateValute);
         XMLGregorianCalendar xmlGregorValute = null;
         try {
@@ -167,6 +172,8 @@ public class FaktureController {
         }
 
         nalogZaPrenos.getPodaciOPrenosu().setDatumValute(xmlGregorValute);
+
+        System.out.println("DatumValute: "+nalogZaPrenos.getPodaciOPrenosu().getDatumValute().toString());
 
         try {
             Firma firma = firmaService.findByBrojRacuna(nalogZaPrenos.getPodaciOPrenosu().getDuznikPrenos().getBrojRacuna());
@@ -252,7 +259,7 @@ public class FaktureController {
                 zaglavljeRet = zaglavljeService.dodajIliIzmeniZaglavlje(zaglavljeRet);
                 if (zaglavljeRet != null) {
                     List<Stavka> stavke = stavkaService.findByZaglavlje(zaglavljeRet);
-                    ZaglavljeStavkeDTO zaglavljeStavkeDTO = new ZaglavljeStavkeDTO(zaglavlje, stavke);
+                    ZaglavljeStavkeDTO zaglavljeStavkeDTO = new ZaglavljeStavkeDTO(zaglavljeRet, stavke);
                     new FirmaWebSocket().displayMessageToActiveUsers();
                     return new ResponseEntity<ZaglavljeStavkeDTO>(zaglavljeStavkeDTO, HttpStatus.OK);
                 } else {
